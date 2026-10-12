@@ -79,7 +79,7 @@ async function handleTranslate(request, env) {
           "content-type": "application/json",
           authorization: `Bearer ${env.DEEPSEEK_API_KEY}`
         },
-        body: JSON.stringify(buildDeepSeekRequest(translationRequest, env.DEEPSEEK_MODEL || "deepseek-v4-flash"))
+        body: JSON.stringify(buildDeepSeekRequest(translationRequest, env.DEEPSEEK_MODEL || "deepseek-flash"))
       });
       const upstreamPayload = await readUpstreamPayload(upstream);
 
@@ -314,8 +314,15 @@ function parseOpenAIResponse(payload) {
 }
 
 function parseDeepSeekResponse(payload) {
-  const outputText = payload?.choices?.[0]?.message?.content || "";
-  if (!outputText) throw new Error("DeepSeek returned no text.");
+  const choice = payload?.choices?.[0];
+  const content = choice?.message?.content;
+  const outputText = Array.isArray(content)
+    ? content.map((part) => typeof part === "string" ? part : part?.text || "").join("")
+    : content || "";
+  if (!outputText.trim()) {
+    if (choice?.finish_reason === "length") throw new Error("DeepSeek hit the output limit. Try shorter text.");
+    throw new Error("DeepSeek returned an empty response. Please try again.");
+  }
 
   return normalizeTranslationPayload(parseJsonText(outputText));
 }

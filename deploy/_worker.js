@@ -400,7 +400,7 @@ async function handleTranslate(request, env) {
     }
 
     if (env.DEEPSEEK_API_KEY) {
-      const deepseekModel = env.DEEPSEEK_MODEL || "deepseek-v4-flash";
+      const deepseekModel = env.DEEPSEEK_MODEL || "deepseek-flash";
       const upstream = await fetch(DEEPSEEK_CHAT_URL, {
         method: "POST",
         headers: {
@@ -520,7 +520,7 @@ async function handleAsk(request, env) {
     }
 
     if (env.DEEPSEEK_API_KEY) {
-      const deepseekModel = env.DEEPSEEK_MODEL || "deepseek-v4-flash";
+      const deepseekModel = env.DEEPSEEK_MODEL || "deepseek-flash";
       const upstream = await fetch(DEEPSEEK_CHAT_URL, {
         method: "POST",
         headers: {
