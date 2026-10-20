@@ -156,7 +156,7 @@ Return only valid JSON. Use exactly this JSON shape:
       }
     ],
     response_format: { type: "json_object" },
-    max_tokens: 1800,
+    max_tokens: 6000,
     stream: false
   };
 }
