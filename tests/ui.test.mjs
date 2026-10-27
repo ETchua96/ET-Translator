@@ -34,7 +34,7 @@ test("index page includes the required translator controls and result regions", 
 
   assert.match(html, /ET Translator/);
   assert.match(html, /data-mode="translate"/);
-  assert.match(html, /data-mode="ask"/);
+  assert.doesNotMatch(html, /data-mode="ask"/);
   assert.match(html, /data-lang="en"/);
   assert.match(html, /data-lang="zh"/);
   assert.match(html, /data-provider="deepseek"/);

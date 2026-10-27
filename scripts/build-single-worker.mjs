@@ -1,8 +1,8 @@
 import { readFile, writeFile } from "node:fs/promises";
 
-const indexHtml = await readFile(new URL("../deploy/index.html", import.meta.url));
-const appJs = await readFile(new URL("../deploy/app.js", import.meta.url));
-const stylesCss = await readFile(new URL("../deploy/styles.css", import.meta.url));
+const indexHtml = await readFile(new URL("../public/index.html", import.meta.url));
+const appJs = await readFile(new URL("../public/app.js", import.meta.url));
+const stylesCss = await readFile(new URL("../public/styles.css", import.meta.url));
 const baseWorker = await readFile(new URL("../deploy/_worker.js", import.meta.url), "utf8");
 
 const assetConstants = `const B64_INDEX_HTML = "${indexHtml.toString("base64")}";
@@ -59,3 +59,7 @@ const worker = baseWorker
   .replace("\nfunction validateTranslateRequest", "\n" + assetHelpers + "\nfunction validateTranslateRequest");
 
 await writeFile(new URL("../deploy-worker.js", import.meta.url), worker);
+await writeFile(new URL("../index.js", import.meta.url), worker);
+await writeFile(new URL("../deploy/index.html", import.meta.url), indexHtml);
+await writeFile(new URL("../deploy/app.js", import.meta.url), appJs);
+await writeFile(new URL("../deploy/styles.css", import.meta.url), stylesCss);
