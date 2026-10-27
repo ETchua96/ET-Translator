@@ -165,6 +165,10 @@ h2 {
   display: block;
 }
 
+.ask-view {
+  display: none !important;
+}
+
 .translator-grid {
   display: grid;
   grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
