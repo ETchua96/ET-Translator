@@ -3,15 +3,18 @@ import { readFile, writeFile } from "node:fs/promises";
 const indexHtml = await readFile(new URL("../public/index.html", import.meta.url));
 const appJs = await readFile(new URL("../public/app.js", import.meta.url));
 const stylesCss = await readFile(new URL("../public/styles.css", import.meta.url));
+const favicon = await readFile(new URL("../public/favicon.svg", import.meta.url));
 const baseWorker = await readFile(new URL("../deploy/_worker.js", import.meta.url), "utf8");
 
 const assetConstants = `const B64_INDEX_HTML = "${indexHtml.toString("base64")}";
 const B64_APP_JS = "${appJs.toString("base64")}";
 const B64_STYLES_CSS = "${stylesCss.toString("base64")}";
+const B64_FAVICON = "${favicon.toString("base64")}";
 
 const INDEX_HTML = decodeBase64(B64_INDEX_HTML);
 const APP_JS = decodeBase64(B64_APP_JS);
 const STYLES_CSS = decodeBase64(B64_STYLES_CSS);
+const FAVICON = decodeBase64(B64_FAVICON);
 `;
 
 const assetHelpers = `function assetResponse(body, contentType) {
@@ -54,6 +57,10 @@ const worker = baseWorker
       return assetResponse(STYLES_CSS, "text/css; charset=utf-8");
     }
 
+    if (url.pathname === "/favicon.svg") {
+      return assetResponse(FAVICON, "image/svg+xml; charset=utf-8");
+    }
+
     return jsonResponse({ error: "Not found." }, 404);`
   )
   .replace("\nfunction validateTranslateRequest", "\n" + assetHelpers + "\nfunction validateTranslateRequest");
@@ -63,3 +70,4 @@ await writeFile(new URL("../index.js", import.meta.url), worker);
 await writeFile(new URL("../deploy/index.html", import.meta.url), indexHtml);
 await writeFile(new URL("../deploy/app.js", import.meta.url), appJs);
 await writeFile(new URL("../deploy/styles.css", import.meta.url), stylesCss);
+await writeFile(new URL("../deploy/favicon.svg", import.meta.url), favicon);
