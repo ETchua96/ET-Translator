@@ -6,8 +6,8 @@ import {
   buildSystemPrompt,
   parseOpenAIResponse,
   validateTranslateRequest
-} from "../functions/_shared/translator.js";
-import { onRequestPost } from "../functions/api/translate.js";
+} from "../src/index.js";
+
 
 test("validateTranslateRequest normalizes a business translation request", () => {
   const request = validateTranslateRequest({
@@ -162,75 +162,3 @@ test("parseOpenAIResponse reads nested output content JSON", () => {
   assert.equal(parsed.targetLanguage, "English");
   assert.equal(parsed.meaning, "Move this project ahead.");
 });
-
-test("onRequestPost returns a setup error when the API key is missing", async () => {
-  const response = await onRequestPost({
-    request: jsonRequest({ text: "hello", direction: "auto", tone: "business" }),
-    env: {}
-  });
-  const body = await response.json();
-
-  assert.equal(response.status, 500);
-  assert.match(body.error, /OPENAI_API_KEY/);
-});
-
-test("onRequestPost calls OpenAI and returns parsed translation JSON", async () => {
-  let capturedUrl = "";
-  let capturedInit = {};
-
-  const response = await onRequestPost({
-    request: jsonRequest({ text: "Can we align on scope?", direction: "en-zh", tone: "business" }),
-    env: {
-      OPENAI_API_KEY: "sk-test",
-      OPENAI_MODEL: "gpt-test",
-      OPENAI_FETCH: async (url, init) => {
-        capturedUrl = url;
-        capturedInit = init;
-        return Response.json({
-          output_text: JSON.stringify({
-            sourceLanguage: "English",
-            targetLanguage: "Chinese",
-            translation: "我们可以先对齐范围吗？",
-            pinyin: "Wǒmen kěyǐ xiān duìqí fànwéi ma?",
-            meaning: "Asks whether everyone can agree on the project scope first.",
-            terms: [],
-            alternatives: [],
-            usageNotes: [],
-            confidence: "high"
-          })
-        });
-      }
-    }
-  });
-  const body = await response.json();
-  const upstreamBody = JSON.parse(capturedInit.body);
-
-  assert.equal(response.status, 200);
-  assert.equal(capturedUrl, "https://api.openai.com/v1/responses");
-  assert.equal(capturedInit.headers.authorization, "Bearer sk-test");
-  assert.equal(upstreamBody.model, "gpt-test");
-  assert.equal(body.translation, "我们可以先对齐范围吗？");
-  assert.equal(body.pinyin, "Wǒmen kěyǐ xiān duìqí fànwéi ma?");
-});
-
-test("onRequestPost returns a helpful upstream error", async () => {
-  const response = await onRequestPost({
-    request: jsonRequest({ text: "hello", direction: "auto", tone: "business" }),
-    env: {
-      OPENAI_API_KEY: "sk-test",
-      OPENAI_FETCH: async () => Response.json({ error: { message: "rate limited" } }, { status: 429 })
-    }
-  });
-  const body = await response.json();
-
-  assert.equal(response.status, 502);
-  assert.match(body.error, /rate limited/);
-});
-
-function jsonRequest(body) {
-  return new Request("https://translator.test/api/translate", {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(body)
-  });
-}

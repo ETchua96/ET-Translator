@@ -1,93 +1,60 @@
-# ET Business Translator
+# ET Translator
 
-A mobile-first English to Chinese and Chinese to English translator for PM work in a Chinese business environment. It returns the translation, Hanyu Pinyin, plain meaning, key business terms, and alternate phrasing.
+English ↔ Simplified Chinese translation for work. Includes Hanyu Pinyin, plain meanings, business terms, and alternative wording. DeepSeek is the default provider; Gemini is available from the provider switch.
 
-## What It Does
+Live app: https://ettranslate.eetiong96.workers.dev/
 
-- Translates English to Simplified Chinese and Chinese to English.
-- Favors Mainland Chinese business terms such as `对齐`, `范围`, `交付物`, `优先级`, and `风险`.
-- Shows Hanyu Pinyin with tone marks so Chinese text is readable.
-- Explains word meaning for important business terms.
-- Lets you switch between DeepSeek and Gemini from the page.
-- Keeps recent translations in the current browser/app session only.
-- Logs token usage by device when Cloudflare KV is connected.
-- Adds basic daily rate limits to reduce accidental API credit burn.
+## Project layout
 
-Supabase is not needed for v1. Add Supabase later only if you want accounts, synced history, a shared team glossary, or admin-managed company terms.
+- `public/`: HTML, CSS, browser JavaScript, and favicon.
+- `src/index.js`: the single Cloudflare Worker backend source.
+- `scripts/`: local preview and deployment build.
+- `tests/`: translation, UI, security, and generated Worker tests.
+- `dist/index.js`: generated Worker containing the current public assets. Ignored by Git.
 
-## Local Preview
+Edit source files only. The build embeds the current public assets automatically. Do not edit or commit generated deployment files.
 
-Run:
+## Develop locally
 
-```powershell
-node scripts/local-server.mjs
-```
-
-Open:
-
-```text
-http://localhost:4173
-```
-
-Without an API key, the local server returns a mock translation so you can test the interface. For real translations locally:
+Requires Node.js 22 or later.
 
 ```powershell
-$env:DEEPSEEK_API_KEY="your_api_key_here"
-node scripts/local-server.mjs
+npm install
+npm run serve
 ```
 
-## Cloudflare Worker Hosting
+Open http://localhost:4173. Without a key for the selected provider, local preview returns sample translations.
 
-Use this when deploying from GitHub.
+For real local translations, set `DEEPSEEK_API_KEY` or `GEMINI_API_KEY` in the terminal environment before starting the server. Never commit API keys.
 
-1. Push this folder to your GitHub repo.
-2. In Cloudflare, create a Worker project from that GitHub repo.
-3. Build command: `npm run deploy`
-4. Add secret variables in Cloudflare:
-   - Name: `DEEPSEEK_API_KEY`
-   - Value: your DeepSeek API key
-   - Name: `GEMINI_API_KEY`
-   - Value: your Gemini API key
-5. Optional variables:
-   - Name: `DEEPSEEK_MODEL`
-   - Value: `deepseek-v4-flash`
-   - Name: `GEMINI_MODEL`
-   - Value: `gemini-3.5-flash`
-   - Name: `ADMIN_PIN`
-   - Value: any private PIN you choose for the usage dashboard
-   - Name: `DAILY_DEVICE_LIMIT`
-   - Value: optional, defaults to `50`
-   - Name: `DAILY_TOTAL_LIMIT`
-   - Value: optional, defaults to `200`
-6. Optional usage storage:
-   - In Cloudflare, create a KV namespace.
-   - Bind it to this Worker with the variable/binding name `USAGE_KV`.
-   - Without `USAGE_KV`, translation still works but usage will not be stored.
-7. Deploy and share the Cloudflare Worker URL with friends.
-
-This project uses `index.js` as the Worker file. That one file serves the web page and also handles `/api/translate`, so Cloudflare must deploy it as a Worker, not as static assets only.
-
-## Usage Dashboard
-
-After adding `ADMIN_PIN` and binding `USAGE_KV`, open:
-
-```text
-https://your-worker-url/admin/usage?pin=YOUR_PIN
-```
-
-After the dashboard opens, the app removes the PIN from the browser address bar and uses a short admin session cookie for dashboard actions.
-
-The dashboard shows calls, token usage, estimated cost, and device grouping. Exact phone model is only available when the browser or Android APK sends it. Normal mobile browsers may hide the model for privacy.
-
-## Tests
-
-Run:
+## Check and deploy
 
 ```powershell
-npm test
 npm run check
+npm test
+npm run deploy
 ```
 
-## Notes
+`npm test` builds the deployment file first. Wrangler also runs the build automatically before deployment and preserves dashboard variables with `--keep-vars`. The target is the existing `ettranslate` Cloudflare Worker configured in `wrangler.toml`.
 
-The DeepSeek and Gemini API keys stay on the Cloudflare server side. They are never placed in browser JavaScript.
+For Cloudflare Git builds, use `npm install` as the install command and `npm run deploy` as the deploy command.
+
+### Cloudflare settings
+
+- Secret `DEEPSEEK_API_KEY`: required for DeepSeek.
+- Secret `GEMINI_API_KEY`: required for Gemini.
+- Optional `DEEPSEEK_MODEL`: defaults to `deepseek-flash`.
+- Optional `GEMINI_MODEL`: defaults to `gemini-3.5-flash`.
+- Optional `ADMIN_PIN` and `USAGE_KV` binding: enable the usage dashboard at `/admin/usage?pin=YOUR_PIN`.
+- `DAILY_DEVICE_LIMIT=0` and `DAILY_TOTAL_LIMIT=0` mean unlimited and are the code defaults.
+
+Keys remain on the Worker. Translation history and cached results remain in the current browser session. Supabase is not needed.
+
+## Android projects
+
+Android sources are maintained separately so this repository stays focused on JavaScript, HTML, and CSS:
+
+- [ET-Translator-Android](https://github.com/ETchua96/ET-Translator-Android): the online Android WebView wrapper.
+- [ET-Translator-Offline-Archive](https://github.com/ETchua96/ET-Translator-Offline-Archive): the archived experimental native Qwen translator.
+
+Both repositories are private. Existing APK installations load the live site and do not need rebuilding for web UI updates. Old source snapshots remain recoverable from this repository's Git history.

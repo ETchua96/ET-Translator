@@ -1,14 +1,19 @@
 const MAX_TEXT_LENGTH = 5000;
 const OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses";
-const B64_INDEX_HTML = "PCFkb2N0eXBlIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KICA8aGVhZD4KICAgIDxtZXRhIGNoYXJzZXQ9InV0Zi04Ij4KICAgIDxtZXRhIG5hbWU9InZpZXdwb3J0IiBjb250ZW50PSJ3aWR0aD1kZXZpY2Utd2lkdGgsIGluaXRpYWwtc2NhbGU9MSI+CiAgICA8bWV0YSBuYW1lPSJ0aGVtZS1jb2xvciIgY29udGVudD0iIzBmNzY2ZSI+CiAgICA8dGl0bGU+RVQgQnVzaW5lc3MgVHJhbnNsYXRvcjwvdGl0bGU+CiAgICA8bGluayByZWw9InN0eWxlc2hlZXQiIGhyZWY9Ii9zdHlsZXMuY3NzIj4KICA8L2hlYWQ+CiAgPGJvZHk+CiAgICA8bWFpbiBjbGFzcz0iYXBwLXNoZWxsIj4KICAgICAgPGhlYWRlciBjbGFzcz0idG9wYmFyIj4KICAgICAgICA8ZGl2PgogICAgICAgICAgPHAgY2xhc3M9ImV5ZWJyb3ciPkVUIEJ1c2luZXNzIFRyYW5zbGF0b3I8L3A+CiAgICAgICAgICA8aDE+RW5nbGlzaCDih4QgQ2hpbmVzZTwvaDE+CiAgICAgICAgPC9kaXY+CiAgICAgICAgPGRpdiBjbGFzcz0ic3RhdHVzLXBpbGwiIGlkPSJjb25uZWN0aW9uU3RhdHVzIj5SZWFkeTwvZGl2PgogICAgICA8L2hlYWRlcj4KCiAgICAgIDxzZWN0aW9uIGNsYXNzPSJ0cmFuc2xhdG9yLWdyaWQiIGFyaWEtbGFiZWw9IlRyYW5zbGF0b3IiPgogICAgICAgIDxmb3JtIGNsYXNzPSJwYW5lbCBpbnB1dC1wYW5lbCIgaWQ9InRyYW5zbGF0b3JGb3JtIj4KICAgICAgICAgIDxkaXYgY2xhc3M9ImZpZWxkLWhlYWQiPgogICAgICAgICAgICA8bGFiZWwgZm9yPSJzb3VyY2VUZXh0Ij5UZXh0PC9sYWJlbD4KICAgICAgICAgICAgPHNwYW4gaWQ9ImNoYXJDb3VudCI+MCAvIDUwMDA8L3NwYW4+CiAgICAgICAgICA8L2Rpdj4KICAgICAgICAgIDx0ZXh0YXJlYQogICAgICAgICAgICBpZD0ic291cmNlVGV4dCIKICAgICAgICAgICAgbmFtZT0ic291cmNlVGV4dCIKICAgICAgICAgICAgcm93cz0iMTAiCiAgICAgICAgICAgIG1heGxlbmd0aD0iNTAwMCIKICAgICAgICAgICAgc3BlbGxjaGVjaz0idHJ1ZSIKICAgICAgICAgICAgcGxhY2Vob2xkZXI9IlBhc3RlIGEgd29yayBjaGF0LCBtZWV0aW5nIG5vdGUsIFBSRCBsaW5lLCBvciBlbWFpbCBzZW50ZW5jZS4iCiAgICAgICAgICA+PC90ZXh0YXJlYT4KCiAgICAgICAgICA8ZGl2IGNsYXNzPSJjb250cm9sLXJvdyI+CiAgICAgICAgICAgIDxkaXY+CiAgICAgICAgICAgICAgPHNwYW4gY2xhc3M9ImNvbnRyb2wtbGFiZWwiPkRpcmVjdGlvbjwvc3Bhbj4KICAgICAgICAgICAgICA8ZGl2IGNsYXNzPSJzZWdtZW50ZWQgdHdvLXdheSIgaWQ9ImRpcmVjdGlvbkNvbnRyb2wiIHJvbGU9Imdyb3VwIiBhcmlhLWxhYmVsPSJUcmFuc2xhdGlvbiBkaXJlY3Rpb24iPgogICAgICAgICAgICAgICAgPGJ1dHRvbiB0eXBlPSJidXR0b24iIGNsYXNzPSJzZWdtZW50IGFjdGl2ZSIgZGF0YS1kaXJlY3Rpb249ImVuLXpoIj5FTiDihpIg5Lit5paHPC9idXR0b24+CiAgICAgICAgICAgICAgICA8YnV0dG9uIHR5cGU9ImJ1dHRvbiIgY2xhc3M9InNlZ21lbnQiIGRhdGEtZGlyZWN0aW9uPSJ6aC1lbiI+5Lit5paHIOKGkiBFTjwvYnV0dG9uPgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8L2Rpdj4KCiAgICAgICAgICAgIDxkaXY+CiAgICAgICAgICAgICAgPHNwYW4gY2xhc3M9ImNvbnRyb2wtbGFiZWwiPlRvbmU8L3NwYW4+CiAgICAgICAgICAgICAgPGRpdiBjbGFzcz0ic2VnbWVudGVkIiBpZD0idG9uZUNvbnRyb2wiIHJvbGU9Imdyb3VwIiBhcmlhLWxhYmVsPSJUb25lIj4KICAgICAgICAgICAgICAgIDxidXR0b24gdHlwZT0iYnV0dG9uIiBjbGFzcz0ic2VnbWVudCBhY3RpdmUiIGRhdGEtdG9uZT0iYnVzaW5lc3MiPkJ1c2luZXNzPC9idXR0b24+CiAgICAgICAgICAgICAgICA8YnV0dG9uIHR5cGU9ImJ1dHRvbiIgY2xhc3M9InNlZ21lbnQiIGRhdGEtdG9uZT0icGxhaW4iPlBsYWluPC9idXR0b24+CiAgICAgICAgICAgICAgICA8YnV0dG9uIHR5cGU9ImJ1dHRvbiIgY2xhc3M9InNlZ21lbnQiIGRhdGEtdG9uZT0icG9saXNoZWQiPlBvbGlzaGVkPC9idXR0b24+CiAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPC9kaXY+CgogICAgICAgICAgPGxhYmVsIGNsYXNzPSJjb250ZXh0LWxhYmVsIiBmb3I9ImNvbnRleHRUZXh0Ij5Db250ZXh0PC9sYWJlbD4KICAgICAgICAgIDxpbnB1dAogICAgICAgICAgICBpZD0iY29udGV4dFRleHQiCiAgICAgICAgICAgIG5hbWU9ImNvbnRleHRUZXh0IgogICAgICAgICAgICB0eXBlPSJ0ZXh0IgogICAgICAgICAgICBtYXhsZW5ndGg9IjEwMDAiCiAgICAgICAgICAgIHBsYWNlaG9sZGVyPSJPcHRpb25hbDogbWVldGluZywgV2VDaGF0LCBQUkQsIHZlbmRvciBlbWFpbCIKICAgICAgICAgID4KCiAgICAgICAgICA8ZGl2IGNsYXNzPSJhY3Rpb24tcm93Ij4KICAgICAgICAgICAgPGJ1dHRvbiB0eXBlPSJzdWJtaXQiIGNsYXNzPSJwcmltYXJ5LWJ1dHRvbiIgaWQ9InRyYW5zbGF0ZUJ1dHRvbiI+VHJhbnNsYXRlPC9idXR0b24+CiAgICAgICAgICAgIDxidXR0b24gdHlwZT0iYnV0dG9uIiBjbGFzcz0iZ2hvc3QtYnV0dG9uIiBpZD0icGFzdGVCdXR0b24iPlBhc3RlPC9idXR0b24+CiAgICAgICAgICAgIDxidXR0b24gdHlwZT0iYnV0dG9uIiBjbGFzcz0iZ2hvc3QtYnV0dG9uIiBpZD0iY2xlYXJCdXR0b24iPkNsZWFyPC9idXR0b24+CiAgICAgICAgICA8L2Rpdj4KICAgICAgICAgIDxwIGNsYXNzPSJlcnJvci10ZXh0IiBpZD0iZXJyb3JUZXh0IiByb2xlPSJhbGVydCI+PC9wPgogICAgICAgIDwvZm9ybT4KCiAgICAgICAgPHNlY3Rpb24gY2xhc3M9InBhbmVsIG91dHB1dC1wYW5lbCIgYXJpYS1sYWJlbD0iVHJhbnNsYXRpb24gcmVzdWx0Ij4KICAgICAgICAgIDxkaXYgY2xhc3M9InJlc3VsdC1oZWFkIj4KICAgICAgICAgICAgPGRpdj4KICAgICAgICAgICAgICA8c3BhbiBjbGFzcz0iY29udHJvbC1sYWJlbCI+VHJhbnNsYXRpb248L3NwYW4+CiAgICAgICAgICAgICAgPHAgY2xhc3M9Imxhbmd1YWdlLXBhaXIiIGlkPSJsYW5ndWFnZVBhaXIiPldhaXRpbmcgZm9yIHRleHQ8L3A+CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8YnV0dG9uIHR5cGU9ImJ1dHRvbiIgY2xhc3M9Imdob3N0LWJ1dHRvbiBzbWFsbCIgaWQ9ImNvcHlUcmFuc2xhdGlvbkJ1dHRvbiI+Q29weTwvYnV0dG9uPgogICAgICAgICAgPC9kaXY+CiAgICAgICAgICA8cCBjbGFzcz0idHJhbnNsYXRpb24tdGV4dCIgaWQ9InRyYW5zbGF0aW9uVGV4dCI+WW91ciB0cmFuc2xhdGlvbiB3aWxsIGFwcGVhciBoZXJlLjwvcD4KCiAgICAgICAgICA8ZGl2IGNsYXNzPSJyZXN1bHQtYmxvY2siPgogICAgICAgICAgICA8ZGl2IGNsYXNzPSJyZXN1bHQtaGVhZCBjb21wYWN0Ij4KICAgICAgICAgICAgICA8aDI+SGFueXUgUGlueWluPC9oMj4KICAgICAgICAgICAgICA8YnV0dG9uIHR5cGU9ImJ1dHRvbiIgY2xhc3M9Imdob3N0LWJ1dHRvbiBzbWFsbCIgaWQ9ImNvcHlQaW55aW5CdXR0b24iPkNvcHk8L2J1dHRvbj4KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgIDxwIGlkPSJwaW55aW5UZXh0IiBjbGFzcz0icGlueWluLXRleHQiPlBpbnlpbiBhcHBlYXJzIHdoZW4gQ2hpbmVzZSB0ZXh0IGlzIGludm9sdmVkLjwvcD4KICAgICAgICAgIDwvZGl2PgoKICAgICAgICAgIDxkaXYgY2xhc3M9InJlc3VsdC1ibG9jayI+CiAgICAgICAgICAgIDxoMj5NZWFuaW5nPC9oMj4KICAgICAgICAgICAgPHAgaWQ9Im1lYW5pbmdUZXh0Ij5QbGFpbiBtZWFuaW5nIGFwcGVhcnMgaGVyZS48L3A+CiAgICAgICAgICA8L2Rpdj4KCiAgICAgICAgICA8ZGl2IGNsYXNzPSJyZXN1bHQtYmxvY2siPgogICAgICAgICAgICA8aDI+QnVzaW5lc3MgVGVybXM8L2gyPgogICAgICAgICAgICA8dWwgaWQ9InRlcm1zTGlzdCIgY2xhc3M9InRlcm1zLWxpc3QiPgogICAgICAgICAgICAgIDxsaSBjbGFzcz0iZW1wdHktc3RhdGUiPktleSB0ZXJtcyBhbmQgd29yZCBtZWFuaW5ncyBhcHBlYXIgaGVyZS48L2xpPgogICAgICAgICAgICA8L3VsPgogICAgICAgICAgPC9kaXY+CgogICAgICAgICAgPGRpdiBjbGFzcz0icmVzdWx0LWJsb2NrIj4KICAgICAgICAgICAgPGgyPkFsdGVybmF0aXZlczwvaDI+CiAgICAgICAgICAgIDx1bCBpZD0iYWx0ZXJuYXRpdmVzTGlzdCIgY2xhc3M9ImFsdGVybmF0aXZlcy1saXN0Ij4KICAgICAgICAgICAgICA8bGkgY2xhc3M9ImVtcHR5LXN0YXRlIj5BbHRlcm5hdGUgcGhyYXNpbmcgYXBwZWFycyBoZXJlLjwvbGk+CiAgICAgICAgICAgIDwvdWw+CiAgICAgICAgICA8L2Rpdj4KICAgICAgICA8L3NlY3Rpb24+CiAgICAgIDwvc2VjdGlvbj4KCiAgICAgIDxzZWN0aW9uIGNsYXNzPSJoaXN0b3J5LXBhbmVsIiBhcmlhLWxhYmVsPSJSZWNlbnQgdHJhbnNsYXRpb25zIj4KICAgICAgICA8ZGl2IGNsYXNzPSJoaXN0b3J5LWhlYWQiPgogICAgICAgICAgPGgyPlJlY2VudDwvaDI+CiAgICAgICAgICA8YnV0dG9uIHR5cGU9ImJ1dHRvbiIgY2xhc3M9Imdob3N0LWJ1dHRvbiBzbWFsbCIgaWQ9ImNsZWFySGlzdG9yeUJ1dHRvbiI+Q2xlYXI8L2J1dHRvbj4KICAgICAgICA8L2Rpdj4KICAgICAgICA8ZGl2IGlkPSJoaXN0b3J5TGlzdCIgY2xhc3M9Imhpc3RvcnktbGlzdCI+PC9kaXY+CiAgICAgIDwvc2VjdGlvbj4KICAgIDwvbWFpbj4KCiAgICA8c2NyaXB0IHNyYz0iL2FwcC5qcyIgZGVmZXI+PC9zY3JpcHQ+CiAgPC9ib2R5Pgo8L2h0bWw+Cg==";
-const B64_APP_JS = "Y29uc3QgTUFYX1RFWFRfTEVOR1RIID0gNTAwMDsKY29uc3QgSElTVE9SWV9LRVkgPSAiZXQtYnVzaW5lc3MtdHJhbnNsYXRvci1oaXN0b3J5LXYxIjsKCmNvbnN0IHN0YXRlID0gewogIGRpcmVjdGlvbjogImVuLXpoIiwKICB0b25lOiAiYnVzaW5lc3MiLAogIGN1cnJlbnRSZXN1bHQ6IG51bGwsCiAgaGlzdG9yeTogbG9hZEhpc3RvcnkoKQp9OwoKY29uc3QgZWxlbWVudHMgPSB7CiAgZm9ybTogZG9jdW1lbnQucXVlcnlTZWxlY3RvcigiI3RyYW5zbGF0b3JGb3JtIiksCiAgc291cmNlVGV4dDogZG9jdW1lbnQucXVlcnlTZWxlY3RvcigiI3NvdXJjZVRleHQiKSwKICBjb250ZXh0VGV4dDogZG9jdW1lbnQucXVlcnlTZWxlY3RvcigiI2NvbnRleHRUZXh0IiksCiAgY2hhckNvdW50OiBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKCIjY2hhckNvdW50IiksCiAgZGlyZWN0aW9uQ29udHJvbDogZG9jdW1lbnQucXVlcnlTZWxlY3RvcigiI2RpcmVjdGlvbkNvbnRyb2wiKSwKICB0b25lQ29udHJvbDogZG9jdW1lbnQucXVlcnlTZWxlY3RvcigiI3RvbmVDb250cm9sIiksCiAgdHJhbnNsYXRlQnV0dG9uOiBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKCIjdHJhbnNsYXRlQnV0dG9uIiksCiAgcGFzdGVCdXR0b246IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoIiNwYXN0ZUJ1dHRvbiIpLAogIGNsZWFyQnV0dG9uOiBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKCIjY2xlYXJCdXR0b24iKSwKICBlcnJvclRleHQ6IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoIiNlcnJvclRleHQiKSwKICBjb25uZWN0aW9uU3RhdHVzOiBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKCIjY29ubmVjdGlvblN0YXR1cyIpLAogIGxhbmd1YWdlUGFpcjogZG9jdW1lbnQucXVlcnlTZWxlY3RvcigiI2xhbmd1YWdlUGFpciIpLAogIHRyYW5zbGF0aW9uVGV4dDogZG9jdW1lbnQucXVlcnlTZWxlY3RvcigiI3RyYW5zbGF0aW9uVGV4dCIpLAogIHBpbnlpblRleHQ6IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoIiNwaW55aW5UZXh0IiksCiAgbWVhbmluZ1RleHQ6IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoIiNtZWFuaW5nVGV4dCIpLAogIHRlcm1zTGlzdDogZG9jdW1lbnQucXVlcnlTZWxlY3RvcigiI3Rlcm1zTGlzdCIpLAogIGFsdGVybmF0aXZlc0xpc3Q6IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoIiNhbHRlcm5hdGl2ZXNMaXN0IiksCiAgY29weVRyYW5zbGF0aW9uQnV0dG9uOiBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKCIjY29weVRyYW5zbGF0aW9uQnV0dG9uIiksCiAgY29weVBpbnlpbkJ1dHRvbjogZG9jdW1lbnQucXVlcnlTZWxlY3RvcigiI2NvcHlQaW55aW5CdXR0b24iKSwKICBjbGVhckhpc3RvcnlCdXR0b246IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoIiNjbGVhckhpc3RvcnlCdXR0b24iKSwKICBoaXN0b3J5TGlzdDogZG9jdW1lbnQucXVlcnlTZWxlY3RvcigiI2hpc3RvcnlMaXN0IikKfTsKCmVsZW1lbnRzLmZvcm0uYWRkRXZlbnRMaXN0ZW5lcigic3VibWl0IiwgYXN5bmMgKGV2ZW50KSA9PiB7CiAgZXZlbnQucHJldmVudERlZmF1bHQoKTsKICBhd2FpdCB0cmFuc2xhdGUoKTsKfSk7CgplbGVtZW50cy5zb3VyY2VUZXh0LmFkZEV2ZW50TGlzdGVuZXIoImlucHV0IiwgdXBkYXRlQ2hhckNvdW50KTsKZWxlbWVudHMuZGlyZWN0aW9uQ29udHJvbC5hZGRFdmVudExpc3RlbmVyKCJjbGljayIsIChldmVudCkgPT4gc2VsZWN0U2VnbWVudChldmVudCwgImRpcmVjdGlvbiIsICJkaXJlY3Rpb24iKSk7CmVsZW1lbnRzLnRvbmVDb250cm9sLmFkZEV2ZW50TGlzdGVuZXIoImNsaWNrIiwgKGV2ZW50KSA9PiBzZWxlY3RTZWdtZW50KGV2ZW50LCAidG9uZSIsICJ0b25lIikpOwplbGVtZW50cy5wYXN0ZUJ1dHRvbi5hZGRFdmVudExpc3RlbmVyKCJjbGljayIsIHBhc3RlRnJvbUNsaXBib2FyZCk7CmVsZW1lbnRzLmNsZWFyQnV0dG9uLmFkZEV2ZW50TGlzdGVuZXIoImNsaWNrIiwgY2xlYXJJbnB1dCk7CmVsZW1lbnRzLmNvcHlUcmFuc2xhdGlvbkJ1dHRvbi5hZGRFdmVudExpc3RlbmVyKCJjbGljayIsIGNvcHlUcmFuc2xhdGlvbik7CmVsZW1lbnRzLmNvcHlQaW55aW5CdXR0b24uYWRkRXZlbnRMaXN0ZW5lcigiY2xpY2siLCAoKSA9PiBjb3B5VGV4dChlbGVtZW50cy5waW55aW5UZXh0LnRleHRDb250ZW50KSk7CmVsZW1lbnRzLmNsZWFySGlzdG9yeUJ1dHRvbi5hZGRFdmVudExpc3RlbmVyKCJjbGljayIsIGNsZWFySGlzdG9yeSk7Cgp1cGRhdGVDaGFyQ291bnQoKTsKcmVuZGVySGlzdG9yeSgpOwoKYXN5bmMgZnVuY3Rpb24gdHJhbnNsYXRlKCkgewogIGNvbnN0IHRleHQgPSBlbGVtZW50cy5zb3VyY2VUZXh0LnZhbHVlLnRyaW0oKTsKICBjb25zdCBjb250ZXh0ID0gZWxlbWVudHMuY29udGV4dFRleHQudmFsdWUudHJpbSgpOwoKICBjbGVhckVycm9yKCk7CgogIGlmICghdGV4dCkgewogICAgc2hvd0Vycm9yKCJFbnRlciBzb21ldGhpbmcgdG8gdHJhbnNsYXRlLiIpOwogICAgZWxlbWVudHMuc291cmNlVGV4dC5mb2N1cygpOwogICAgcmV0dXJuOwogIH0KCiAgaWYgKHRleHQubGVuZ3RoID4gTUFYX1RFWFRfTEVOR1RIKSB7CiAgICBzaG93RXJyb3IoIktlZXAgaXQgdW5kZXIgNTAwMCBjaGFyYWN0ZXJzLiIpOwogICAgcmV0dXJuOwogIH0KCiAgc2V0QnVzeSh0cnVlKTsKCiAgdHJ5IHsKICAgIGNvbnN0IHJlc3BvbnNlID0gYXdhaXQgZmV0Y2goIi9hcGkvdHJhbnNsYXRlIiwgewogICAgICBtZXRob2Q6ICJQT1NUIiwKICAgICAgaGVhZGVyczogewogICAgICAgICJjb250ZW50LXR5cGUiOiAiYXBwbGljYXRpb24vanNvbiIKICAgICAgfSwKICAgICAgYm9keTogSlNPTi5zdHJpbmdpZnkoewogICAgICAgIHRleHQsCiAgICAgICAgY29udGV4dCwKICAgICAgICBkaXJlY3Rpb246IHN0YXRlLmRpcmVjdGlvbiwKICAgICAgICB0b25lOiBzdGF0ZS50b25lCiAgICAgIH0pCiAgICB9KTsKICAgIGNvbnN0IGRhdGEgPSBhd2FpdCByZWFkSnNvblJlc3BvbnNlKHJlc3BvbnNlKTsKCiAgICBpZiAoIXJlc3BvbnNlLm9rKSB7CiAgICAgIHRocm93IG5ldyBFcnJvcihkYXRhLmVycm9yIHx8ICJUcmFuc2xhdGlvbiBmYWlsZWQuIik7CiAgICB9CgogICAgc3RhdGUuY3VycmVudFJlc3VsdCA9IGRhdGE7CiAgICByZW5kZXJSZXN1bHQoZGF0YSk7CiAgICBzYXZlSGlzdG9yeSh7IGlucHV0OiB0ZXh0LCBjb250ZXh0LCBkaXJlY3Rpb246IHN0YXRlLmRpcmVjdGlvbiwgdG9uZTogc3RhdGUudG9uZSwgcmVzdWx0OiBkYXRhIH0pOwogIH0gY2F0Y2ggKGVycm9yKSB7CiAgICBzaG93RXJyb3IoZXJyb3IgaW5zdGFuY2VvZiBFcnJvciA/IGVycm9yLm1lc3NhZ2UgOiAiVHJhbnNsYXRpb24gZmFpbGVkLiIpOwogIH0gZmluYWxseSB7CiAgICBzZXRCdXN5KGZhbHNlKTsKICB9Cn0KCmFzeW5jIGZ1bmN0aW9uIHJlYWRKc29uUmVzcG9uc2UocmVzcG9uc2UpIHsKICBjb25zdCB0ZXh0ID0gYXdhaXQgcmVzcG9uc2UudGV4dCgpOwoKICBpZiAoIXRleHQudHJpbSgpKSB7CiAgICB0aHJvdyBuZXcgRXJyb3IoYEFQSSByZXR1cm5lZCBhbiBlbXB0eSByZXNwb25zZS4gU3RhdHVzOiAke3Jlc3BvbnNlLnN0YXR1c30uIFRyeSBvcGVuaW5nIC9hcGkvdHJhbnNsYXRlIG9uIHlvdXIgbGl2ZSBzaXRlIHRvIGNoZWNrIHdoZXRoZXIgdGhlIFdvcmtlciBpcyBhY3RpdmUuYCk7CiAgfQoKICB0cnkgewogICAgcmV0dXJuIEpTT04ucGFyc2UodGV4dCk7CiAgfSBjYXRjaCB7CiAgICB0aHJvdyBuZXcgRXJyb3IoYEFQSSBkaWQgbm90IHJldHVybiBKU09OLiBTdGF0dXM6ICR7cmVzcG9uc2Uuc3RhdHVzfS4gRmlyc3QgcGFydCBvZiByZXNwb25zZTogJHt0ZXh0LnNsaWNlKDAsIDE4MCl9YCk7CiAgfQp9CgpmdW5jdGlvbiByZW5kZXJSZXN1bHQocmVzdWx0KSB7CiAgZWxlbWVudHMubGFuZ3VhZ2VQYWlyLnRleHRDb250ZW50ID0gYCR7cmVzdWx0LnNvdXJjZUxhbmd1YWdlIHx8ICJTb3VyY2UifSDihpIgJHtyZXN1bHQudGFyZ2V0TGFuZ3VhZ2UgfHwgIlRhcmdldCJ9YDsKICBlbGVtZW50cy50cmFuc2xhdGlvblRleHQudGV4dENvbnRlbnQgPSByZXN1bHQudHJhbnNsYXRpb24gfHwgIk5vIHRyYW5zbGF0aW9uIHJldHVybmVkLiI7CiAgZWxlbWVudHMucGlueWluVGV4dC50ZXh0Q29udGVudCA9IHJlc3VsdC5waW55aW4gfHwgIk5vIHBpbnlpbiByZXR1cm5lZC4iOwogIGVsZW1lbnRzLm1lYW5pbmdUZXh0LnRleHRDb250ZW50ID0gcmVzdWx0Lm1lYW5pbmcgfHwgIk5vIG1lYW5pbmcgcmV0dXJuZWQuIjsKICByZW5kZXJUZXJtcyhyZXN1bHQudGVybXMgfHwgW10pOwogIHJlbmRlckFsdGVybmF0aXZlcyhyZXN1bHQuYWx0ZXJuYXRpdmVzIHx8IFtdKTsKfQoKZnVuY3Rpb24gcmVuZGVyVGVybXModGVybXMpIHsKICBlbGVtZW50cy50ZXJtc0xpc3QucmVwbGFjZUNoaWxkcmVuKCk7CgogIGlmICghdGVybXMubGVuZ3RoKSB7CiAgICBlbGVtZW50cy50ZXJtc0xpc3QuYXBwZW5kKGVtcHR5SXRlbSgiTm8ga2V5IHRlcm1zIHJldHVybmVkLiIpKTsKICAgIHJldHVybjsKICB9CgogIGZvciAoY29uc3QgdGVybSBvZiB0ZXJtcykgewogICAgY29uc3QgaXRlbSA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoImxpIik7CiAgICBpdGVtLmNsYXNzTmFtZSA9ICJ0ZXJtLWl0ZW0iOwoKICAgIGNvbnN0IGhlYWQgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCJkaXYiKTsKICAgIGhlYWQuY2xhc3NOYW1lID0gInRlcm0taGVhZCI7CgogICAgY29uc3QgdGl0bGUgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCJzdHJvbmciKTsKICAgIHRpdGxlLnRleHRDb250ZW50ID0gW3Rlcm0uc291cmNlLCB0ZXJtLnRyYW5zbGF0aW9uXS5maWx0ZXIoQm9vbGVhbikuam9pbigiIOKGkiAiKTsKCiAgICBjb25zdCBwaW55aW4gPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCJzcGFuIik7CiAgICBwaW55aW4udGV4dENvbnRlbnQgPSB0ZXJtLnBpbnlpbiB8fCAiIjsKCiAgICBjb25zdCBtZWFuaW5nID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgicCIpOwogICAgbWVhbmluZy50ZXh0Q29udGVudCA9IHRlcm0ubWVhbmluZyB8fCAiIjsKCiAgICBjb25zdCBub3RlID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgic21hbGwiKTsKICAgIG5vdGUudGV4dENvbnRlbnQgPSB0ZXJtLm5vdGUgfHwgIiI7CgogICAgaGVhZC5hcHBlbmQodGl0bGUsIHBpbnlpbik7CiAgICBpdGVtLmFwcGVuZChoZWFkLCBtZWFuaW5nLCBub3RlKTsKICAgIGVsZW1lbnRzLnRlcm1zTGlzdC5hcHBlbmQoaXRlbSk7CiAgfQp9CgpmdW5jdGlvbiByZW5kZXJBbHRlcm5hdGl2ZXMoYWx0ZXJuYXRpdmVzKSB7CiAgZWxlbWVudHMuYWx0ZXJuYXRpdmVzTGlzdC5yZXBsYWNlQ2hpbGRyZW4oKTsKCiAgaWYgKCFhbHRlcm5hdGl2ZXMubGVuZ3RoKSB7CiAgICBlbGVtZW50cy5hbHRlcm5hdGl2ZXNMaXN0LmFwcGVuZChlbXB0eUl0ZW0oIk5vIGFsdGVybmF0ZSBwaHJhc2luZyByZXR1cm5lZC4iKSk7CiAgICByZXR1cm47CiAgfQoKICBmb3IgKGNvbnN0IGFsdGVybmF0aXZlIG9mIGFsdGVybmF0aXZlcykgewogICAgY29uc3QgaXRlbSA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoImxpIik7CiAgICBpdGVtLmNsYXNzTmFtZSA9ICJhbHRlcm5hdGl2ZS1pdGVtIjsKCiAgICBjb25zdCBsYWJlbCA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoInN0cm9uZyIpOwogICAgbGFiZWwudGV4dENvbnRlbnQgPSBhbHRlcm5hdGl2ZS5sYWJlbCB8fCAiQWx0ZXJuYXRpdmUiOwoKICAgIGNvbnN0IHRleHQgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCJwIik7CiAgICB0ZXh0LnRleHRDb250ZW50ID0gYWx0ZXJuYXRpdmUudGV4dCB8fCAiIjsKCiAgICBjb25zdCBtZXRhID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgic21hbGwiKTsKICAgIG1ldGEudGV4dENvbnRlbnQgPSBbYWx0ZXJuYXRpdmUucGlueWluLCBhbHRlcm5hdGl2ZS53aGVuVG9Vc2VdLmZpbHRlcihCb29sZWFuKS5qb2luKCIgwrcgIik7CgogICAgaXRlbS5hcHBlbmQobGFiZWwsIHRleHQsIG1ldGEpOwogICAgZWxlbWVudHMuYWx0ZXJuYXRpdmVzTGlzdC5hcHBlbmQoaXRlbSk7CiAgfQp9CgpmdW5jdGlvbiBlbXB0eUl0ZW0odGV4dCkgewogIGNvbnN0IGl0ZW0gPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCJsaSIpOwogIGl0ZW0uY2xhc3NOYW1lID0gImVtcHR5LXN0YXRlIjsKICBpdGVtLnRleHRDb250ZW50ID0gdGV4dDsKICByZXR1cm4gaXRlbTsKfQoKZnVuY3Rpb24gc2VsZWN0U2VnbWVudChldmVudCwgc3RhdGVLZXksIGRhdGFLZXkpIHsKICBjb25zdCBidXR0b24gPSBldmVudC50YXJnZXQuY2xvc2VzdCgiYnV0dG9uIik7CgogIGlmICghYnV0dG9uKSB7CiAgICByZXR1cm47CiAgfQoKICBzdGF0ZVtzdGF0ZUtleV0gPSBidXR0b24uZGF0YXNldFtkYXRhS2V5XTsKCiAgZm9yIChjb25zdCBzZWdtZW50IG9mIGJ1dHRvbi5wYXJlbnRFbGVtZW50LnF1ZXJ5U2VsZWN0b3JBbGwoIi5zZWdtZW50IikpIHsKICAgIHNlZ21lbnQuY2xhc3NMaXN0LnRvZ2dsZSgiYWN0aXZlIiwgc2VnbWVudCA9PT0gYnV0dG9uKTsKICB9Cn0KCmFzeW5jIGZ1bmN0aW9uIHBhc3RlRnJvbUNsaXBib2FyZCgpIHsKICBjbGVhckVycm9yKCk7CgogIHRyeSB7CiAgICBjb25zdCB0ZXh0ID0gYXdhaXQgbmF2aWdhdG9yLmNsaXBib2FyZC5yZWFkVGV4dCgpOwogICAgZWxlbWVudHMuc291cmNlVGV4dC52YWx1ZSA9IHRleHQ7CiAgICB1cGRhdGVDaGFyQ291bnQoKTsKICAgIGVsZW1lbnRzLnNvdXJjZVRleHQuZm9jdXMoKTsKICB9IGNhdGNoIHsKICAgIHNob3dFcnJvcigiQ2xpcGJvYXJkIHBlcm1pc3Npb24gd2FzIGJsb2NrZWQuIik7CiAgfQp9CgpmdW5jdGlvbiBjbGVhcklucHV0KCkgewogIGVsZW1lbnRzLnNvdXJjZVRleHQudmFsdWUgPSAiIjsKICBlbGVtZW50cy5jb250ZXh0VGV4dC52YWx1ZSA9ICIiOwogIHN0YXRlLmN1cnJlbnRSZXN1bHQgPSBudWxsOwogIGNsZWFyRXJyb3IoKTsKICB1cGRhdGVDaGFyQ291bnQoKTsKICBlbGVtZW50cy5zb3VyY2VUZXh0LmZvY3VzKCk7Cn0KCmFzeW5jIGZ1bmN0aW9uIGNvcHlUcmFuc2xhdGlvbigpIHsKICBpZiAoIXN0YXRlLmN1cnJlbnRSZXN1bHQpIHsKICAgIGF3YWl0IGNvcHlUZXh0KGVsZW1lbnRzLnRyYW5zbGF0aW9uVGV4dC50ZXh0Q29udGVudCk7CiAgICByZXR1cm47CiAgfQoKICBjb25zdCByZXN1bHQgPSBzdGF0ZS5jdXJyZW50UmVzdWx0OwogIGNvbnN0IHRleHQgPSBbCiAgICByZXN1bHQudHJhbnNsYXRpb24sCiAgICByZXN1bHQucGlueWluID8gYFBpbnlpbjogJHtyZXN1bHQucGlueWlufWAgOiAiIiwKICAgIHJlc3VsdC5tZWFuaW5nID8gYE1lYW5pbmc6ICR7cmVzdWx0Lm1lYW5pbmd9YCA6ICIiCiAgXQogICAgLmZpbHRlcihCb29sZWFuKQogICAgLmpvaW4oIlxuXG4iKTsKCiAgYXdhaXQgY29weVRleHQodGV4dCk7Cn0KCmFzeW5jIGZ1bmN0aW9uIGNvcHlUZXh0KHRleHQpIHsKICBjbGVhckVycm9yKCk7CgogIHRyeSB7CiAgICBhd2FpdCBuYXZpZ2F0b3IuY2xpcGJvYXJkLndyaXRlVGV4dCh0ZXh0LnRyaW0oKSk7CiAgICBzZXRTdGF0dXMoIkNvcGllZCIpOwogICAgd2luZG93LnNldFRpbWVvdXQoKCkgPT4gc2V0U3RhdHVzKCJSZWFkeSIpLCAxNDAwKTsKICB9IGNhdGNoIHsKICAgIHNob3dFcnJvcigiQ29weSBmYWlsZWQuIik7CiAgfQp9CgpmdW5jdGlvbiBzYXZlSGlzdG9yeShlbnRyeSkgewogIGNvbnN0IGhpc3RvcnlFbnRyeSA9IHsKICAgIC4uLmVudHJ5LAogICAgaWQ6IGNyZWF0ZUhpc3RvcnlJZCgpLAogICAgY3JlYXRlZEF0OiBuZXcgRGF0ZSgpLnRvSVNPU3RyaW5nKCkKICB9OwoKICBzdGF0ZS5oaXN0b3J5ID0gW2hpc3RvcnlFbnRyeSwgLi4uc3RhdGUuaGlzdG9yeV0uc2xpY2UoMCwgMTApOwogIGxvY2FsU3RvcmFnZS5zZXRJdGVtKEhJU1RPUllfS0VZLCBKU09OLnN0cmluZ2lmeShzdGF0ZS5oaXN0b3J5KSk7CiAgcmVuZGVySGlzdG9yeSgpOwp9CgpmdW5jdGlvbiBjcmVhdGVIaXN0b3J5SWQoKSB7CiAgaWYgKGdsb2JhbFRoaXMuY3J5cHRvICYmIHR5cGVvZiBnbG9iYWxUaGlzLmNyeXB0by5yYW5kb21VVUlEID09PSAiZnVuY3Rpb24iKSB7CiAgICByZXR1cm4gZ2xvYmFsVGhpcy5jcnlwdG8ucmFuZG9tVVVJRCgpOwogIH0KCiAgcmV0dXJuIGAke0RhdGUubm93KCl9LSR7TWF0aC5yYW5kb20oKS50b1N0cmluZygzNikuc2xpY2UoMil9YDsKfQoKZnVuY3Rpb24gbG9hZEhpc3RvcnkoKSB7CiAgdHJ5IHsKICAgIGNvbnN0IHBhcnNlZCA9IEpTT04ucGFyc2UobG9jYWxTdG9yYWdlLmdldEl0ZW0oSElTVE9SWV9LRVkpIHx8ICJbXSIpOwogICAgcmV0dXJuIEFycmF5LmlzQXJyYXkocGFyc2VkKSA/IHBhcnNlZCA6IFtdOwogIH0gY2F0Y2ggewogICAgcmV0dXJuIFtdOwogIH0KfQoKZnVuY3Rpb24gcmVuZGVySGlzdG9yeSgpIHsKICBlbGVtZW50cy5oaXN0b3J5TGlzdC5yZXBsYWNlQ2hpbGRyZW4oKTsKCiAgaWYgKCFzdGF0ZS5oaXN0b3J5Lmxlbmd0aCkgewogICAgY29uc3QgZW1wdHkgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCJwIik7CiAgICBlbXB0eS5jbGFzc05hbWUgPSAiZW1wdHktaGlzdG9yeSI7CiAgICBlbXB0eS50ZXh0Q29udGVudCA9ICJObyByZWNlbnQgdHJhbnNsYXRpb25zIHlldC4iOwogICAgZWxlbWVudHMuaGlzdG9yeUxpc3QuYXBwZW5kKGVtcHR5KTsKICAgIHJldHVybjsKICB9CgogIGZvciAoY29uc3QgaXRlbSBvZiBzdGF0ZS5oaXN0b3J5KSB7CiAgICBjb25zdCBidXR0b24gPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCJidXR0b24iKTsKICAgIGJ1dHRvbi50eXBlID0gImJ1dHRvbiI7CiAgICBidXR0b24uY2xhc3NOYW1lID0gImhpc3RvcnktaXRlbSI7CiAgICBidXR0b24uYWRkRXZlbnRMaXN0ZW5lcigiY2xpY2siLCAoKSA9PiByZXN0b3JlSGlzdG9yeUl0ZW0oaXRlbSkpOwoKICAgIGNvbnN0IGlucHV0ID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgic3BhbiIpOwogICAgaW5wdXQuY2xhc3NOYW1lID0gImhpc3RvcnktaW5wdXQiOwogICAgaW5wdXQudGV4dENvbnRlbnQgPSBpdGVtLmlucHV0OwoKICAgIGNvbnN0IG91dHB1dCA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoInNwYW4iKTsKICAgIG91dHB1dC5jbGFzc05hbWUgPSAiaGlzdG9yeS1vdXRwdXQiOwogICAgb3V0cHV0LnRleHRDb250ZW50ID0gaXRlbS5yZXN1bHQ/LnRyYW5zbGF0aW9uIHx8ICIiOwoKICAgIGJ1dHRvbi5hcHBlbmQoaW5wdXQsIG91dHB1dCk7CiAgICBlbGVtZW50cy5oaXN0b3J5TGlzdC5hcHBlbmQoYnV0dG9uKTsKICB9Cn0KCmZ1bmN0aW9uIHJlc3RvcmVIaXN0b3J5SXRlbShpdGVtKSB7CiAgZWxlbWVudHMuc291cmNlVGV4dC52YWx1ZSA9IGl0ZW0uaW5wdXQgfHwgIiI7CiAgZWxlbWVudHMuY29udGV4dFRleHQudmFsdWUgPSBpdGVtLmNvbnRleHQgfHwgIiI7CiAgc3RhdGUuZGlyZWN0aW9uID0gaXRlbS5kaXJlY3Rpb24gfHwgImVuLXpoIjsKICBzdGF0ZS50b25lID0gaXRlbS50b25lIHx8ICJidXNpbmVzcyI7CiAgc3RhdGUuY3VycmVudFJlc3VsdCA9IGl0ZW0ucmVzdWx0IHx8IG51bGw7CiAgdXBkYXRlU2VsZWN0ZWRTZWdtZW50cygpOwogIHVwZGF0ZUNoYXJDb3VudCgpOwoKICBpZiAoaXRlbS5yZXN1bHQpIHsKICAgIHJlbmRlclJlc3VsdChpdGVtLnJlc3VsdCk7CiAgfQp9CgpmdW5jdGlvbiBjbGVhckhpc3RvcnkoKSB7CiAgc3RhdGUuaGlzdG9yeSA9IFtdOwogIGxvY2FsU3RvcmFnZS5yZW1vdmVJdGVtKEhJU1RPUllfS0VZKTsKICByZW5kZXJIaXN0b3J5KCk7Cn0KCmZ1bmN0aW9uIHVwZGF0ZVNlbGVjdGVkU2VnbWVudHMoKSB7CiAgZm9yIChjb25zdCBidXR0b24gb2YgZWxlbWVudHMuZGlyZWN0aW9uQ29udHJvbC5xdWVyeVNlbGVjdG9yQWxsKCIuc2VnbWVudCIpKSB7CiAgICBidXR0b24uY2xhc3NMaXN0LnRvZ2dsZSgiYWN0aXZlIiwgYnV0dG9uLmRhdGFzZXQuZGlyZWN0aW9uID09PSBzdGF0ZS5kaXJlY3Rpb24pOwogIH0KCiAgZm9yIChjb25zdCBidXR0b24gb2YgZWxlbWVudHMudG9uZUNvbnRyb2wucXVlcnlTZWxlY3RvckFsbCgiLnNlZ21lbnQiKSkgewogICAgYnV0dG9uLmNsYXNzTGlzdC50b2dnbGUoImFjdGl2ZSIsIGJ1dHRvbi5kYXRhc2V0LnRvbmUgPT09IHN0YXRlLnRvbmUpOwogIH0KfQoKZnVuY3Rpb24gdXBkYXRlQ2hhckNvdW50KCkgewogIGVsZW1lbnRzLmNoYXJDb3VudC50ZXh0Q29udGVudCA9IGAke2VsZW1lbnRzLnNvdXJjZVRleHQudmFsdWUubGVuZ3RofSAvICR7TUFYX1RFWFRfTEVOR1RIfWA7Cn0KCmZ1bmN0aW9uIHNldEJ1c3koaXNCdXN5KSB7CiAgZWxlbWVudHMudHJhbnNsYXRlQnV0dG9uLmRpc2FibGVkID0gaXNCdXN5OwogIGVsZW1lbnRzLnRyYW5zbGF0ZUJ1dHRvbi50ZXh0Q29udGVudCA9IGlzQnVzeSA/ICJUcmFuc2xhdGluZyIgOiAiVHJhbnNsYXRlIjsKICBzZXRTdGF0dXMoaXNCdXN5ID8gIlRyYW5zbGF0aW5nIiA6ICJSZWFkeSIpOwp9CgpmdW5jdGlvbiBzZXRTdGF0dXModGV4dCkgewogIGVsZW1lbnRzLmNvbm5lY3Rpb25TdGF0dXMudGV4dENvbnRlbnQgPSB0ZXh0Owp9CgpmdW5jdGlvbiBzaG93RXJyb3IobWVzc2FnZSkgewogIGVsZW1lbnRzLmVycm9yVGV4dC50ZXh0Q29udGVudCA9IG1lc3NhZ2U7CiAgc2V0U3RhdHVzKCJFcnJvciIpOwp9CgpmdW5jdGlvbiBjbGVhckVycm9yKCkgewogIGVsZW1lbnRzLmVycm9yVGV4dC50ZXh0Q29udGVudCA9ICIiOwp9Cgp3aW5kb3cuVHJhbnNsYXRvckFwcCA9IHsKICByZW5kZXJUZXJtcywKICBjb3B5VHJhbnNsYXRpb24KfTsK";
-const B64_STYLES_CSS = "OnJvb3QgewogIC0tYmc6ICNmNmY4ZmI7CiAgLS1wYW5lbDogI2ZmZmZmZjsKICAtLWluazogIzE3MjAyYTsKICAtLW11dGVkOiAjNjY3MDg1OwogIC0tbGluZTogI2Q5ZTBlYTsKICAtLXRlYWw6ICMwZjc2NmU7CiAgLS10ZWFsLWRhcms6ICMxMTVlNTk7CiAgLS1yZWQ6ICNiNDIzMTg7CiAgLS1hbWJlcjogI2I0NTMwOTsKICAtLWJsdWU6ICMxZDRlZDg7CiAgLS1zaGFkb3c6IDAgMThweCA0MnB4IHJnYmEoMjMsIDMyLCA0MiwgMC4wOSk7Cn0KCiogewogIGJveC1zaXppbmc6IGJvcmRlci1ib3g7Cn0KCmJvZHkgewogIG1hcmdpbjogMDsKICBtaW4taGVpZ2h0OiAxMDB2aDsKICBiYWNrZ3JvdW5kOiB2YXIoLS1iZyk7CiAgY29sb3I6IHZhcigtLWluayk7CiAgZm9udC1mYW1pbHk6IEludGVyLCB1aS1zYW5zLXNlcmlmLCBzeXN0ZW0tdWksIC1hcHBsZS1zeXN0ZW0sIEJsaW5rTWFjU3lzdGVtRm9udCwgIlNlZ29lIFVJIiwgc2Fucy1zZXJpZjsKfQoKYnV0dG9uLAp0ZXh0YXJlYSwKaW5wdXQgewogIGZvbnQ6IGluaGVyaXQ7Cn0KCmJ1dHRvbiB7CiAgdG91Y2gtYWN0aW9uOiBtYW5pcHVsYXRpb247Cn0KCi5hcHAtc2hlbGwgewogIHdpZHRoOiBtaW4oMTE4MHB4LCBjYWxjKDEwMCUgLSAzMnB4KSk7CiAgbWFyZ2luOiAwIGF1dG87CiAgcGFkZGluZzogMjRweCAwIDM2cHg7Cn0KCi50b3BiYXIgewogIGRpc3BsYXk6IGZsZXg7CiAgYWxpZ24taXRlbXM6IGNlbnRlcjsKICBqdXN0aWZ5LWNvbnRlbnQ6IHNwYWNlLWJldHdlZW47CiAgZ2FwOiAxNnB4OwogIG1hcmdpbi1ib3R0b206IDE4cHg7Cn0KCi5leWVicm93IHsKICBtYXJnaW46IDAgMCA0cHg7CiAgY29sb3I6IHZhcigtLXRlYWwpOwogIGZvbnQtc2l6ZTogMC44MnJlbTsKICBmb250LXdlaWdodDogNzYwOwogIHRleHQtdHJhbnNmb3JtOiB1cHBlcmNhc2U7Cn0KCmgxLApoMiwKcCB7CiAgbWFyZ2luLXRvcDogMDsKfQoKaDEgewogIG1hcmdpbi1ib3R0b206IDA7CiAgZm9udC1zaXplOiAycmVtOwogIGxpbmUtaGVpZ2h0OiAxLjE7Cn0KCmgyIHsKICBtYXJnaW4tYm90dG9tOiAxMHB4OwogIGZvbnQtc2l6ZTogMXJlbTsKICBsaW5lLWhlaWdodDogMS4yNTsKfQoKLnN0YXR1cy1waWxsIHsKICBtaW4td2lkdGg6IDk2cHg7CiAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGluZSk7CiAgYm9yZGVyLXJhZGl1czogOTk5cHg7CiAgYmFja2dyb3VuZDogdmFyKC0tcGFuZWwpOwogIGNvbG9yOiB2YXIoLS1tdXRlZCk7CiAgcGFkZGluZzogOHB4IDEycHg7CiAgdGV4dC1hbGlnbjogY2VudGVyOwogIGZvbnQtc2l6ZTogMC44OHJlbTsKICBmb250LXdlaWdodDogNzAwOwp9CgoudHJhbnNsYXRvci1ncmlkIHsKICBkaXNwbGF5OiBncmlkOwogIGdyaWQtdGVtcGxhdGUtY29sdW1uczogbWlubWF4KDAsIDAuOTJmcikgbWlubWF4KDAsIDEuMDhmcik7CiAgZ2FwOiAxOHB4OwogIGFsaWduLWl0ZW1zOiBzdGFydDsKfQoKLnBhbmVsLAouaGlzdG9yeS1wYW5lbCB7CiAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGluZSk7CiAgYm9yZGVyLXJhZGl1czogOHB4OwogIGJhY2tncm91bmQ6IHZhcigtLXBhbmVsKTsKICBib3gtc2hhZG93OiB2YXIoLS1zaGFkb3cpOwp9CgouaW5wdXQtcGFuZWwsCi5vdXRwdXQtcGFuZWwgewogIHBhZGRpbmc6IDE4cHg7Cn0KCi5maWVsZC1oZWFkLAoucmVzdWx0LWhlYWQsCi5oaXN0b3J5LWhlYWQsCi50ZXJtLWhlYWQgewogIGRpc3BsYXk6IGZsZXg7CiAgYWxpZ24taXRlbXM6IGNlbnRlcjsKICBqdXN0aWZ5LWNvbnRlbnQ6IHNwYWNlLWJldHdlZW47CiAgZ2FwOiAxMnB4Owp9CgouZmllbGQtaGVhZCBsYWJlbCwKLmNvbnRyb2wtbGFiZWwsCi5jb250ZXh0LWxhYmVsIHsKICBjb2xvcjogdmFyKC0tbXV0ZWQpOwogIGZvbnQtc2l6ZTogMC44NHJlbTsKICBmb250LXdlaWdodDogNzYwOwp9CgojY2hhckNvdW50IHsKICBjb2xvcjogdmFyKC0tbXV0ZWQpOwogIGZvbnQtc2l6ZTogMC44cmVtOwp9Cgp0ZXh0YXJlYSwKaW5wdXQgewogIHdpZHRoOiAxMDAlOwogIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWxpbmUpOwogIGJvcmRlci1yYWRpdXM6IDhweDsKICBiYWNrZ3JvdW5kOiAjZmJmY2ZlOwogIGNvbG9yOiB2YXIoLS1pbmspOwogIG91dGxpbmU6IG5vbmU7Cn0KCnRleHRhcmVhIHsKICBtaW4taGVpZ2h0OiAyNjBweDsKICBtYXJnaW4tdG9wOiA4cHg7CiAgcGFkZGluZzogMTRweDsKICBsaW5lLWhlaWdodDogMS41NTsKICByZXNpemU6IHZlcnRpY2FsOwp9CgppbnB1dCB7CiAgaGVpZ2h0OiA0NHB4OwogIG1hcmdpbi10b3A6IDdweDsKICBwYWRkaW5nOiAwIDEycHg7Cn0KCnRleHRhcmVhOmZvY3VzLAppbnB1dDpmb2N1cyB7CiAgYm9yZGVyLWNvbG9yOiB2YXIoLS10ZWFsKTsKICBib3gtc2hhZG93OiAwIDAgMCAzcHggcmdiYSgxNSwgMTE4LCAxMTAsIDAuMTQpOwp9CgouY29udHJvbC1yb3cgewogIGRpc3BsYXk6IGdyaWQ7CiAgZ3JpZC10ZW1wbGF0ZS1jb2x1bW5zOiAxZnIgMWZyOwogIGdhcDogMTRweDsKICBtYXJnaW4tdG9wOiAxNnB4Owp9Cgouc2VnbWVudGVkIHsKICBkaXNwbGF5OiBncmlkOwogIGdyaWQtdGVtcGxhdGUtY29sdW1uczogcmVwZWF0KDMsIG1pbm1heCgwLCAxZnIpKTsKICBnYXA6IDRweDsKICBtaW4taGVpZ2h0OiA0NHB4OwogIG1hcmdpbi10b3A6IDdweDsKICBwYWRkaW5nOiA0cHg7CiAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tbGluZSk7CiAgYm9yZGVyLXJhZGl1czogOHB4OwogIGJhY2tncm91bmQ6ICNmMmY1Zjk7Cn0KCi5zZWdtZW50ZWQudHdvLXdheSB7CiAgZ3JpZC10ZW1wbGF0ZS1jb2x1bW5zOiByZXBlYXQoMiwgbWlubWF4KDAsIDFmcikpOwp9Cgouc2VnbWVudCB7CiAgbWluLXdpZHRoOiAwOwogIGJvcmRlcjogMDsKICBib3JkZXItcmFkaXVzOiA2cHg7CiAgYmFja2dyb3VuZDogdHJhbnNwYXJlbnQ7CiAgY29sb3I6IHZhcigtLW11dGVkKTsKICBwYWRkaW5nOiA4cHggNnB4OwogIGZvbnQtc2l6ZTogMC45cmVtOwogIGZvbnQtd2VpZ2h0OiA3NjA7CiAgY3Vyc29yOiBwb2ludGVyOwp9Cgouc2VnbWVudC5hY3RpdmUgewogIGJhY2tncm91bmQ6IHZhcigtLXBhbmVsKTsKICBjb2xvcjogdmFyKC0tdGVhbC1kYXJrKTsKICBib3gtc2hhZG93OiAwIDFweCAzcHggcmdiYSgyMywgMzIsIDQyLCAwLjEpOwp9CgouY29udGV4dC1sYWJlbCB7CiAgZGlzcGxheTogYmxvY2s7CiAgbWFyZ2luLXRvcDogMTZweDsKfQoKLmFjdGlvbi1yb3cgewogIGRpc3BsYXk6IGZsZXg7CiAgZmxleC13cmFwOiB3cmFwOwogIGdhcDogMTBweDsKICBtYXJnaW4tdG9wOiAxNnB4Owp9CgoucHJpbWFyeS1idXR0b24sCi5naG9zdC1idXR0b24gewogIG1pbi1oZWlnaHQ6IDQycHg7CiAgYm9yZGVyLXJhZGl1czogOHB4OwogIHBhZGRpbmc6IDAgMTVweDsKICBmb250LXdlaWdodDogODAwOwogIGN1cnNvcjogcG9pbnRlcjsKfQoKLnByaW1hcnktYnV0dG9uIHsKICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS10ZWFsKTsKICBiYWNrZ3JvdW5kOiB2YXIoLS10ZWFsKTsKICBjb2xvcjogI2ZmZmZmZjsKfQoKLnByaW1hcnktYnV0dG9uOmhvdmVyIHsKICBiYWNrZ3JvdW5kOiB2YXIoLS10ZWFsLWRhcmspOwp9CgoucHJpbWFyeS1idXR0b246ZGlzYWJsZWQgewogIGN1cnNvcjogd2FpdDsKICBvcGFjaXR5OiAwLjY4Owp9CgouZ2hvc3QtYnV0dG9uIHsKICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saW5lKTsKICBiYWNrZ3JvdW5kOiAjZmZmZmZmOwogIGNvbG9yOiB2YXIoLS1pbmspOwp9CgouZ2hvc3QtYnV0dG9uOmhvdmVyIHsKICBib3JkZXItY29sb3I6ICNiOGMyY2Y7Cn0KCi5naG9zdC1idXR0b24uc21hbGwgewogIG1pbi1oZWlnaHQ6IDM0cHg7CiAgcGFkZGluZzogMCAxMXB4OwogIGZvbnQtc2l6ZTogMC44NHJlbTsKfQoKLmVycm9yLXRleHQgewogIG1pbi1oZWlnaHQ6IDIycHg7CiAgbWFyZ2luOiAxMnB4IDAgMDsKICBjb2xvcjogdmFyKC0tcmVkKTsKICBmb250LXNpemU6IDAuOTJyZW07CiAgZm9udC13ZWlnaHQ6IDcwMDsKfQoKLmxhbmd1YWdlLXBhaXIgewogIG1hcmdpbjogNHB4IDAgMDsKICBjb2xvcjogdmFyKC0tbXV0ZWQpOwogIGZvbnQtc2l6ZTogMC45cmVtOwp9CgoudHJhbnNsYXRpb24tdGV4dCB7CiAgbWluLWhlaWdodDogOTRweDsKICBtYXJnaW46IDE0cHggMCAwOwogIHBhZGRpbmctYm90dG9tOiAxNHB4OwogIGJvcmRlci1ib3R0b206IDFweCBzb2xpZCB2YXIoLS1saW5lKTsKICBmb250LXNpemU6IDEuNDVyZW07CiAgbGluZS1oZWlnaHQ6IDEuNTU7CiAgd2hpdGUtc3BhY2U6IHByZS13cmFwOwp9CgoucmVzdWx0LWJsb2NrIHsKICBwYWRkaW5nLXRvcDogMTZweDsKfQoKLnJlc3VsdC1oZWFkLmNvbXBhY3QgaDIgewogIG1hcmdpbi1ib3R0b206IDA7Cn0KCi5waW55aW4tdGV4dCB7CiAgY29sb3I6IHZhcigtLWJsdWUpOwogIGZvbnQtc2l6ZTogMS4wNHJlbTsKICBsaW5lLWhlaWdodDogMS42OwogIHdoaXRlLXNwYWNlOiBwcmUtd3JhcDsKfQoKI21lYW5pbmdUZXh0IHsKICBjb2xvcjogIzM0NDA1NDsKICBsaW5lLWhlaWdodDogMS42Owp9CgoudGVybXMtbGlzdCwKLmFsdGVybmF0aXZlcy1saXN0IHsKICBkaXNwbGF5OiBncmlkOwogIGdhcDogMTBweDsKICBtYXJnaW46IDA7CiAgcGFkZGluZzogMDsKICBsaXN0LXN0eWxlOiBub25lOwp9CgoudGVybS1pdGVtLAouYWx0ZXJuYXRpdmUtaXRlbSwKLmVtcHR5LXN0YXRlIHsKICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saW5lKTsKICBib3JkZXItcmFkaXVzOiA4cHg7CiAgcGFkZGluZzogMTJweDsKICBiYWNrZ3JvdW5kOiAjZmJmY2ZlOwp9CgoudGVybS1oZWFkIHN0cm9uZyB7CiAgbGluZS1oZWlnaHQ6IDEuMzU7Cn0KCi50ZXJtLWhlYWQgc3BhbiB7CiAgY29sb3I6IHZhcigtLWFtYmVyKTsKICBmb250LXdlaWdodDogODAwOwp9CgoudGVybS1pdGVtIHAsCi5hbHRlcm5hdGl2ZS1pdGVtIHAgewogIG1hcmdpbjogOHB4IDAgNHB4OwogIGNvbG9yOiAjMzQ0MDU0OwogIGxpbmUtaGVpZ2h0OiAxLjU1Owp9CgoudGVybS1pdGVtIHNtYWxsLAouYWx0ZXJuYXRpdmUtaXRlbSBzbWFsbCB7CiAgY29sb3I6IHZhcigtLW11dGVkKTsKfQoKLmVtcHR5LXN0YXRlLAouZW1wdHktaGlzdG9yeSB7CiAgY29sb3I6IHZhcigtLW11dGVkKTsKfQoKLmhpc3RvcnktcGFuZWwgewogIG1hcmdpbi10b3A6IDE4cHg7CiAgcGFkZGluZzogMTZweDsKfQoKLmhpc3RvcnktaGVhZCBoMiB7CiAgbWFyZ2luOiAwOwp9CgouaGlzdG9yeS1saXN0IHsKICBkaXNwbGF5OiBncmlkOwogIGdyaWQtdGVtcGxhdGUtY29sdW1uczogcmVwZWF0KDIsIG1pbm1heCgwLCAxZnIpKTsKICBnYXA6IDEwcHg7CiAgbWFyZ2luLXRvcDogMTJweDsKfQoKLmhpc3RvcnktaXRlbSB7CiAgZGlzcGxheTogZ3JpZDsKICBnYXA6IDVweDsKICB3aWR0aDogMTAwJTsKICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1saW5lKTsKICBib3JkZXItcmFkaXVzOiA4cHg7CiAgYmFja2dyb3VuZDogI2ZmZmZmZjsKICBwYWRkaW5nOiAxMnB4OwogIGNvbG9yOiB2YXIoLS1pbmspOwogIHRleHQtYWxpZ246IGxlZnQ7CiAgY3Vyc29yOiBwb2ludGVyOwp9CgouaGlzdG9yeS1pbnB1dCwKLmhpc3Rvcnktb3V0cHV0IHsKICBvdmVyZmxvdzogaGlkZGVuOwogIHRleHQtb3ZlcmZsb3c6IGVsbGlwc2lzOwogIHdoaXRlLXNwYWNlOiBub3dyYXA7Cn0KCi5oaXN0b3J5LWlucHV0IHsKICBmb250LXdlaWdodDogODAwOwp9CgouaGlzdG9yeS1vdXRwdXQgewogIGNvbG9yOiB2YXIoLS1tdXRlZCk7CiAgZm9udC1zaXplOiAwLjlyZW07Cn0KCkBtZWRpYSAobWF4LXdpZHRoOiA3MjBweCkgewogIC5hcHAtc2hlbGwgewogICAgd2lkdGg6IG1pbigxMDAlIC0gMjBweCwgNjIwcHgpOwogICAgcGFkZGluZzogMTRweCAwIDI0cHg7CiAgfQoKICAudG9wYmFyIHsKICAgIGFsaWduLWl0ZW1zOiBmbGV4LXN0YXJ0OwogIH0KCiAgaDEgewogICAgZm9udC1zaXplOiAxLjU1cmVtOwogIH0KCiAgLnN0YXR1cy1waWxsIHsKICAgIG1pbi13aWR0aDogODBweDsKICAgIHBhZGRpbmc6IDdweCAxMHB4OwogIH0KCiAgLnRyYW5zbGF0b3ItZ3JpZCwKICAuY29udHJvbC1yb3csCiAgLmhpc3RvcnktbGlzdCB7CiAgICBncmlkLXRlbXBsYXRlLWNvbHVtbnM6IDFmcjsKICB9CgogIC5pbnB1dC1wYW5lbCwKICAub3V0cHV0LXBhbmVsLAogIC5oaXN0b3J5LXBhbmVsIHsKICAgIHBhZGRpbmc6IDE0cHg7CiAgfQoKICB0ZXh0YXJlYSB7CiAgICBtaW4taGVpZ2h0OiAyMTBweDsKICB9CgogIC5hY3Rpb24tcm93IHsKICAgIGRpc3BsYXk6IGdyaWQ7CiAgICBncmlkLXRlbXBsYXRlLWNvbHVtbnM6IDFmciAxZnI7CiAgfQoKICAucHJpbWFyeS1idXR0b24gewogICAgZ3JpZC1jb2x1bW46IDEgLyAtMTsKICB9CgogIC50cmFuc2xhdGlvbi10ZXh0IHsKICAgIGZvbnQtc2l6ZTogMS4yNXJlbTsKICB9Cn0K";
-
-const INDEX_HTML = decodeBase64(B64_INDEX_HTML);
-const APP_JS = decodeBase64(B64_APP_JS);
-const STYLES_CSS = decodeBase64(B64_STYLES_CSS);
-
 const DEEPSEEK_CHAT_URL = "https://api.deepseek.com/chat/completions";
+const GEMINI_GENERATE_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/models";
+const USAGE_LOG_LIMIT = 300;
+const USAGE_RETENTION_SECONDS = 60 * 60 * 24 * 90;
+const RATE_LIMIT_TTL_SECONDS = 60 * 60 * 48;
+const DEFAULT_DAILY_DEVICE_LIMIT = 0;
+const DEFAULT_DAILY_TOTAL_LIMIT = 0;
+const ADMIN_COOKIE_NAME = "et_admin";
+const MODEL_RATES_USD_PER_MILLION = {
+  "deepseek-v4-flash": { input: 0.14, output: 0.28 },
+  "deepseek-v4-pro": { input: 1.74, output: 3.48 },
+  gemini: { input: 0, output: 0 },
+  openai: { input: 0, output: 0 }
+};
 
 const BUSINESS_TERMS = [
   ["alignment", "对齐", "duìqí", "Make sure people agree on the same goal or decision."],
@@ -28,6 +33,273 @@ const BUSINESS_TERMS = [
   ["dependency", "依赖项", "yīlài xiàng", "Work or approval needed before another task can proceed."]
 ];
 
+const TRADITIONAL_TO_SIMPLIFIED = {
+  "們": "们",
+  "與": "与",
+  "專": "专",
+  "業": "业",
+  "東": "东",
+  "兩": "两",
+  "個": "个",
+  "為": "为",
+  "產": "产",
+  "眾": "众",
+  "優": "优",
+  "會": "会",
+  "傳": "传",
+  "價": "价",
+  "內": "内",
+  "寫": "写",
+  "軍": "军",
+  "決": "决",
+  "準": "准",
+  "創": "创",
+  "別": "别",
+  "則": "则",
+  "動": "动",
+  "務": "务",
+  "區": "区",
+  "協": "协",
+  "單": "单",
+  "衛": "卫",
+  "卻": "却",
+  "廠": "厂",
+  "參": "参",
+  "雙": "双",
+  "發": "发",
+  "變": "变",
+  "號": "号",
+  "員": "员",
+  "週": "周",
+  "問": "问",
+  "聖": "圣",
+  "園": "园",
+  "圖": "图",
+  "團": "团",
+  "國": "国",
+  "圍": "围",
+  "塊": "块",
+  "場": "场",
+  "壓": "压",
+  "複": "复",
+  "夠": "够",
+  "頭": "头",
+  "學": "学",
+  "實": "实",
+  "審": "审",
+  "對": "对",
+  "導": "导",
+  "將": "将",
+  "層": "层",
+  "島": "岛",
+  "帶": "带",
+  "幫": "帮",
+  "庫": "库",
+  "廣": "广",
+  "開": "开",
+  "異": "异",
+  "張": "张",
+  "彙": "汇",
+  "彈": "弹",
+  "強": "强",
+  "錄": "录",
+  "後": "后",
+  "從": "从",
+  "復": "复",
+  "徵": "征",
+  "憶": "忆",
+  "態": "态",
+  "總": "总",
+  "懸": "悬",
+  "慣": "惯",
+  "愛": "爱",
+  "願": "愿",
+  "戰": "战",
+  "戶": "户",
+  "擴": "扩",
+  "擾": "扰",
+  "報": "报",
+  "擔": "担",
+  "擬": "拟",
+  "擁": "拥",
+  "擇": "择",
+  "擋": "挡",
+  "擠": "挤",
+  "揮": "挥",
+  "損": "损",
+  "換": "换",
+  "據": "据",
+  "擺": "摆",
+  "攜": "携",
+  "敗": "败",
+  "數": "数",
+  "無": "无",
+  "舊": "旧",
+  "時": "时",
+  "暫": "暂",
+  "術": "术",
+  "機": "机",
+  "權": "权",
+  "條": "条",
+  "來": "来",
+  "極": "极",
+  "構": "构",
+  "標": "标",
+  "樣": "样",
+  "檢": "检",
+  "樓": "楼",
+  "檔": "档",
+  "歡": "欢",
+  "歲": "岁",
+  "歷": "历",
+  "歸": "归",
+  "氣": "气",
+  "沒": "没",
+  "測": "测",
+  "溝": "沟",
+  "滿": "满",
+  "灣": "湾",
+  "點": "点",
+  "獲": "获",
+  "環": "环",
+  "現": "现",
+  "畫": "画",
+  "監": "监",
+  "盤": "盘",
+  "確": "确",
+  "碼": "码",
+  "種": "种",
+  "稱": "称",
+  "穩": "稳",
+  "積": "积",
+  "競": "竞",
+  "節": "节",
+  "範": "范",
+  "簡": "简",
+  "簽": "签",
+  "籌": "筹",
+  "類": "类",
+  "級": "级",
+  "約": "约",
+  "線": "线",
+  "練": "练",
+  "組": "组",
+  "細": "细",
+  "經": "经",
+  "結": "结",
+  "給": "给",
+  "統": "统",
+  "維": "维",
+  "網": "网",
+  "緊": "紧",
+  "編": "编",
+  "緩": "缓",
+  "縱": "纵",
+  "績": "绩",
+  "續": "续",
+  "聯": "联",
+  "職": "职",
+  "腦": "脑",
+  "臨": "临",
+  "藝": "艺",
+  "萬": "万",
+  "華": "华",
+  "藍": "蓝",
+  "處": "处",
+  "虛": "虚",
+  "衝": "冲",
+  "補": "补",
+  "裝": "装",
+  "製": "制",
+  "見": "见",
+  "規": "规",
+  "視": "视",
+  "覽": "览",
+  "觀": "观",
+  "觸": "触",
+  "訂": "订",
+  "計": "计",
+  "訊": "讯",
+  "討": "讨",
+  "議": "议",
+  "記": "记",
+  "講": "讲",
+  "詞": "词",
+  "詢": "询",
+  "試": "试",
+  "誠": "诚",
+  "話": "话",
+  "該": "该",
+  "詳": "详",
+  "認": "认",
+  "說": "说",
+  "課": "课",
+  "調": "调",
+  "談": "谈",
+  "請": "请",
+  "讀": "读",
+  "諮": "咨",
+  "譯": "译",
+  "讓": "让",
+  "讚": "赞",
+  "責": "责",
+  "貴": "贵",
+  "費": "费",
+  "資": "资",
+  "賬": "账",
+  "質": "质",
+  "購": "购",
+  "趨": "趋",
+  "車": "车",
+  "軟": "软",
+  "較": "较",
+  "載": "载",
+  "輔": "辅",
+  "輕": "轻",
+  "輪": "轮",
+  "輯": "辑",
+  "輸": "输",
+  "轉": "转",
+  "辦": "办",
+  "邊": "边",
+  "達": "达",
+  "過": "过",
+  "運": "运",
+  "還": "还",
+  "這": "这",
+  "進": "进",
+  "連": "连",
+  "適": "适",
+  "選": "选",
+  "遺": "遗",
+  "醫": "医",
+  "釋": "释",
+  "鍵": "键",
+  "門": "门",
+  "間": "间",
+  "隊": "队",
+  "階": "阶",
+  "際": "际",
+  "險": "险",
+  "隨": "随",
+  "難": "难",
+  "雖": "虽",
+  "雜": "杂",
+  "電": "电",
+  "靜": "静",
+  "項": "项",
+  "順": "顺",
+  "預": "预",
+  "領": "领",
+  "題": "题",
+  "額": "额",
+  "風": "风",
+  "驗": "验",
+  "驅": "驱",
+  "齊": "齐",
+  "龍": "龙"
+};
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -36,19 +308,23 @@ export default {
       return handleTranslate(request, env);
     }
 
-    if (url.pathname === "/" || url.pathname === "/index.html") {
-      return assetResponse(INDEX_HTML, "text/html; charset=utf-8");
+    if (url.pathname === "/api/usage") {
+      return handleUsageApi(request, env);
     }
 
-    if (url.pathname === "/app.js") {
-      return assetResponse(APP_JS, "text/javascript; charset=utf-8");
+    if (url.pathname === "/api/usage/nickname") {
+      return handleUsageNickname(request, env);
     }
 
-    if (url.pathname === "/styles.css") {
-      return assetResponse(STYLES_CSS, "text/css; charset=utf-8");
+    if (url.pathname === "/api/usage/clear") {
+      return handleUsageClear(request, env);
     }
 
-    return jsonResponse({ error: "Not found." }, 404);
+    if (url.pathname === "/admin/usage") {
+      return handleUsagePage(request, env);
+    }
+
+    return withSecurityHeaders(await env.ASSETS.fetch(request));
   }
 };
 
@@ -64,6 +340,46 @@ async function handleTranslate(request, env) {
   try {
     const payload = await request.json();
     const translationRequest = validateTranslateRequest(payload);
+    const rateLimitError = await enforceApiRateLimit(request, env);
+
+    if (rateLimitError) {
+      return rateLimitError;
+    }
+
+    if (translationRequest.provider === "gemini") {
+      if (!env.GEMINI_API_KEY) {
+        return jsonResponse(
+          { error: "Missing GEMINI_API_KEY. Add it in Cloudflare Worker Variables and Secrets." },
+          500
+        );
+      }
+
+      const geminiModel = env.GEMINI_MODEL || "gemini-3.5-flash";
+      const upstream = await fetch(buildGeminiUrl(geminiModel), {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-goog-api-key": env.GEMINI_API_KEY
+        },
+        body: JSON.stringify(buildGeminiRequest(translationRequest))
+      });
+      const upstreamPayload = await readUpstreamPayload(upstream);
+
+      if (!upstream.ok) {
+        const message = upstreamPayload?.error?.message || upstreamPayload?.message || `HTTP ${upstream.status}`;
+        return jsonResponse({ error: `Gemini error: ${message}` }, 502);
+      }
+
+      const result = parseGeminiResponse(upstreamPayload);
+      await writeUsageLog(request, env, {
+        feature: "translate",
+        provider: "gemini",
+        model: geminiModel,
+        usage: extractGeminiUsage(upstreamPayload),
+        ok: true
+      });
+      return jsonResponse(result);
+    }
 
     if (!env.DEEPSEEK_API_KEY && !env.OPENAI_API_KEY) {
       return jsonResponse(
@@ -73,13 +389,14 @@ async function handleTranslate(request, env) {
     }
 
     if (env.DEEPSEEK_API_KEY) {
+      const deepseekModel = env.DEEPSEEK_MODEL || "deepseek-flash";
       const upstream = await fetch(DEEPSEEK_CHAT_URL, {
         method: "POST",
         headers: {
           "content-type": "application/json",
           authorization: `Bearer ${env.DEEPSEEK_API_KEY}`
         },
-        body: JSON.stringify(buildDeepSeekRequest(translationRequest, env.DEEPSEEK_MODEL || "deepseek-flash"))
+        body: JSON.stringify(buildDeepSeekRequest(translationRequest, deepseekModel))
       });
       const upstreamPayload = await readUpstreamPayload(upstream);
 
@@ -88,16 +405,25 @@ async function handleTranslate(request, env) {
         return jsonResponse({ error: `DeepSeek error: ${message}` }, 502);
       }
 
-      return jsonResponse(parseDeepSeekResponse(upstreamPayload));
+      const result = parseDeepSeekResponse(upstreamPayload);
+      await writeUsageLog(request, env, {
+        feature: "translate",
+        provider: "deepseek",
+        model: deepseekModel,
+        usage: extractDeepSeekUsage(upstreamPayload),
+        ok: true
+      });
+      return jsonResponse(result);
     }
 
+    const openAIModel = env.OPENAI_MODEL || "gpt-5.4-mini";
     const upstream = await fetch(OPENAI_RESPONSES_URL, {
       method: "POST",
       headers: {
         "content-type": "application/json",
         authorization: `Bearer ${env.OPENAI_API_KEY}`
       },
-      body: JSON.stringify(buildOpenAIRequest(translationRequest, env.OPENAI_MODEL || "gpt-5.4-mini"))
+      body: JSON.stringify(buildOpenAIRequest(translationRequest, openAIModel))
     });
     const upstreamPayload = await readUpstreamPayload(upstream);
 
@@ -106,7 +432,15 @@ async function handleTranslate(request, env) {
       return jsonResponse({ error: `Translation service error: ${message}` }, 502);
     }
 
-    return jsonResponse(parseOpenAIResponse(upstreamPayload));
+    const result = parseOpenAIResponse(upstreamPayload);
+    await writeUsageLog(request, env, {
+      feature: "translate",
+      provider: "openai",
+      model: openAIModel,
+      usage: extractOpenAIUsage(upstreamPayload),
+      ok: true
+    });
+    return jsonResponse(result);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Something went wrong.";
     const status = isUserFixableError(message) ? 400 : 500;
@@ -161,38 +495,52 @@ Return only valid JSON. Use exactly this JSON shape:
   };
 }
 
-function assetResponse(body, contentType) {
-  return new Response(body, {
-    headers: {
-      "content-type": contentType,
-      "cache-control": "public, max-age=300"
-    }
-  });
+function buildGeminiUrl(model) {
+  const modelName = String(model || "gemini-3.5-flash").replace(/^models\//, "");
+  return `${GEMINI_GENERATE_BASE_URL}/${modelName}:generateContent`;
 }
 
-function decodeBase64(value) {
-  const binary = atob(value);
-  const bytes = new Uint8Array(binary.length);
+function buildGeminiRequest(request) {
+  return {
+    system_instruction: {
+      parts: [
+        {
+          text: `${buildSystemPrompt()}
 
-  for (let index = 0; index < binary.length; index += 1) {
-    bytes[index] = binary.charCodeAt(index);
-  }
-
-  return new TextDecoder().decode(bytes);
+Return only valid JSON matching the requested schema.`
+        }
+      ]
+    },
+    contents: [
+      {
+        parts: [
+          {
+            text: JSON.stringify(request)
+          }
+        ]
+      }
+    ],
+    generationConfig: {
+      temperature: 0.1,
+      maxOutputTokens: 1800
+    }
+  };
 }
 
 function validateTranslateRequest(input = {}) {
   const text = typeof input.text === "string" ? input.text.trim() : "";
   const direction = typeof input.direction === "string" ? input.direction : "auto";
   const tone = typeof input.tone === "string" ? input.tone : "business";
+  const provider = typeof input.provider === "string" ? input.provider : "deepseek";
   const context = typeof input.context === "string" ? input.context.trim().slice(0, 1000) : "";
 
   if (!text) throw new Error("Enter something to translate.");
   if (text.length > MAX_TEXT_LENGTH) throw new Error("Keep it under 5000 characters.");
   if (!["auto", "en-zh", "zh-en"].includes(direction)) throw new Error("Choose a valid translation direction.");
   if (!["business", "plain", "polished"].includes(tone)) throw new Error("Choose a valid tone.");
+  if (!["deepseek", "gemini"].includes(provider)) throw new Error("Choose a valid AI provider.");
 
-  return { text, direction, tone, context };
+  return { text, direction, tone, provider, context };
 }
 
 function buildOpenAIRequest(request, model) {
@@ -228,16 +576,22 @@ function buildSystemPrompt() {
 
   return `You are a fast English-Chinese business translator for a product manager working in a Mainland Chinese company.
 
-Translate between English and Simplified Chinese. Prefer Mainland Chinese business wording over casual, literal, or Taiwan/Hong Kong phrasing.
+Translate between English and Simplified Chinese only. Prefer Mainland Chinese business wording over casual, literal, or Taiwan/Hong Kong phrasing.
 
 Rules:
 - Detect source language when direction is auto.
 - For English to Chinese, produce natural corporate Chinese for meetings, chat, specs, and project updates.
+- Translate every normal-language sentence into the target language. Do not leave English or Chinese prose untranslated unless it is an exact preserved token.
+- For mixed code review, PRD, ticket, or bug-report text, translate surrounding English prose into Simplified Chinese and preserve only code identifiers, method names, field names, class names, API names, file paths, URLs, acronyms, numbers, and exact error names.
+- Preserve technical tokens only when they are exact identifiers or labels. Translate the explanation around them.
+- Do not copy English sentences into the Chinese translation just because they contain code identifiers. Example: translate the explanation around orderPaymentComplianceEnable and getId(), but keep those identifiers unchanged.
+- Do not use Traditional Chinese. Convert all Chinese output to Simplified Chinese before returning JSON, including translation, terms, and alternatives.
 - For Chinese to English, translate the business meaning clearly rather than word-for-word.
 - Preserve names, product names, acronyms, numbers, dates, times, links, bullet structure, and code-like tokens.
 - Always include Hanyu Pinyin with tone marks for the Chinese translation or Chinese source phrase.
-- Always explain the plain meaning of the full sentence or paragraph.
-- Always extract important business words or phrases and explain each term in simple English.
+- Explain the plain meaning of the full sentence or paragraph in one short sentence.
+- Extract only the most important business words or phrases. Return at most 3 terms.
+- Return at most 1 alternative phrasing.
 - Use Simplified Chinese characters.
 - Do not wrap the JSON in markdown.
 
@@ -315,20 +669,48 @@ function parseOpenAIResponse(payload) {
 
 function parseDeepSeekResponse(payload) {
   const choice = payload?.choices?.[0];
-  const content = choice?.message?.content;
-  const outputText = Array.isArray(content)
-    ? content.map((part) => typeof part === "string" ? part : part?.text || "").join("")
-    : content || "";
-  if (!outputText.trim()) {
-    if (choice?.finish_reason === "length") throw new Error("DeepSeek hit the output limit. Try shorter text.");
+  const outputText = choice?.message?.content || "";
+
+  if (!outputText) {
+    const reason = choice?.finish_reason;
+    if (reason === "length") {
+      throw new Error("DeepSeek hit the output limit. Try shorter text.");
+    }
     throw new Error("DeepSeek returned an empty response. Please try again.");
   }
 
   return normalizeTranslationPayload(parseJsonText(outputText));
 }
 
+function parseGeminiResponse(payload) {
+  const outputText = parseGeminiText(payload);
+
+  if (!outputText) throw new Error("Gemini returned no text.");
+
+  return normalizeTranslationPayload(parseJsonText(outputText));
+}
+
+function parseGeminiText(payload) {
+  return (
+    (typeof payload?.text === "string" ? payload.text : "") ||
+    (payload?.candidates?.[0]?.content?.parts || [])
+      .map((part) => (typeof part?.text === "string" ? part.text : ""))
+      .join("")
+  );
+}
+
 function parseJsonText(text) {
-  return JSON.parse(text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, ""));
+  const cleaned = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "");
+
+  try {
+    return JSON.parse(cleaned);
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      throw new Error("AI returned an incomplete response. Please tap Translate again.");
+    }
+
+    throw error;
+  }
 }
 
 function normalizeTranslationPayload(parsed) {
@@ -396,20 +778,756 @@ function isUserFixableError(message) {
     message.includes("Enter something") ||
     message.includes("Keep it under") ||
     message.includes("valid translation direction") ||
-    message.includes("valid tone")
+    message.includes("valid tone") ||
+    message.includes("valid AI provider")
   );
+}
+
+async function handleUsageApi(request, env) {
+  const authError = await validateAdmin(request, env);
+  if (authError) return authError;
+
+  const snapshot = await readUsageSnapshot(env);
+  return jsonResponse(snapshot);
+}
+
+async function handleUsageNickname(request, env) {
+  const authError = await validateAdmin(request, env);
+  if (authError) return authError;
+
+  if (request.method !== "POST") {
+    return jsonResponse({ error: "Use POST for nickname updates." }, 405);
+  }
+
+  if (!env.USAGE_KV) {
+    return jsonResponse({ error: "Missing USAGE_KV binding." }, 500);
+  }
+
+  const payload = await request.json();
+  const deviceKey = cleanNicknameKey(payload.deviceKey || "");
+  const nickname = cleanNickname(payload.nickname || "");
+
+  if (!deviceKey) {
+    return jsonResponse({ error: "Missing device key." }, 400);
+  }
+
+  if (nickname) {
+    await env.USAGE_KV.put(`nickname:${deviceKey}`, nickname);
+  } else {
+    await env.USAGE_KV.delete(`nickname:${deviceKey}`);
+  }
+
+  return jsonResponse({ ok: true, deviceKey, nickname });
+}
+
+async function handleUsageClear(request, env) {
+  const authError = await validateAdmin(request, env);
+  if (authError) return authError;
+
+  if (request.method !== "POST") {
+    return jsonResponse({ error: "Use POST to clear usage logs." }, 405);
+  }
+
+  if (!env.USAGE_KV) {
+    return jsonResponse({ error: "Missing USAGE_KV binding." }, 500);
+  }
+
+  let deleted = 0;
+  let cursor;
+
+  do {
+    const listed = await env.USAGE_KV.list({
+      prefix: "usage:",
+      cursor,
+      limit: 1000
+    });
+    cursor = listed.cursor;
+
+    await Promise.all(listed.keys.map(async (key) => {
+      await env.USAGE_KV.delete(key.name);
+      deleted += 1;
+    }));
+  } while (cursor);
+
+  return jsonResponse({ ok: true, deleted });
+}
+
+async function handleUsagePage(request, env) {
+  const authError = await validateAdmin(request, env);
+  if (authError) return authError;
+
+  const snapshot = await readUsageSnapshot(env);
+  const headers = new Headers({
+    "content-type": "text/html; charset=utf-8",
+    "cache-control": "no-store"
+  });
+  const url = new URL(request.url);
+
+  if ((url.searchParams.get("pin") || "") === env.ADMIN_PIN) {
+    headers.set("set-cookie", await createAdminCookie(env));
+  }
+
+  return new Response(renderUsageHtml(snapshot), {
+    headers: secureHeaders(headers)
+  });
+}
+
+async function validateAdmin(request, env) {
+  if (!env.ADMIN_PIN) {
+    return htmlResponse(
+      "Set ADMIN_PIN first",
+      "Add a Cloudflare secret/text variable named ADMIN_PIN. Then open /admin/usage?pin=YOUR_PIN.",
+      500
+    );
+  }
+
+  const url = new URL(request.url);
+  const suppliedPin = url.searchParams.get("pin") || request.headers.get("x-admin-pin") || "";
+  const cookieToken = parseCookieHeader(request.headers.get("cookie"))[ADMIN_COOKIE_NAME] || "";
+  const expectedToken = await createAdminToken(env);
+
+  if (suppliedPin !== env.ADMIN_PIN && cookieToken !== expectedToken) {
+    return htmlResponse("Usage dashboard locked", "Open /admin/usage?pin=YOUR_PIN after setting ADMIN_PIN.", 401);
+  }
+
+  return null;
+}
+
+async function createAdminCookie(env) {
+  const token = await createAdminToken(env);
+  return `${ADMIN_COOKIE_NAME}=${token}; Path=/; Max-Age=86400; HttpOnly; Secure; SameSite=Strict`;
+}
+
+async function createAdminToken(env) {
+  return hashText(`admin:${env.ADMIN_PIN || ""}`);
+}
+
+function parseCookieHeader(value) {
+  return String(value || "")
+    .split(";")
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .reduce((cookies, part) => {
+      const index = part.indexOf("=");
+      if (index > 0) {
+        cookies[part.slice(0, index)] = part.slice(index + 1);
+      }
+      return cookies;
+    }, {});
+}
+
+async function enforceApiRateLimit(request, env) {
+  if (!env.USAGE_KV) {
+    return null;
+  }
+
+  const dailyDeviceLimit = readPositiveInteger(env.DAILY_DEVICE_LIMIT, DEFAULT_DAILY_DEVICE_LIMIT);
+  const dailyTotalLimit = readPositiveInteger(env.DAILY_TOTAL_LIMIT, DEFAULT_DAILY_TOTAL_LIMIT);
+
+  if (!dailyDeviceLimit && !dailyTotalLimit) {
+    return null;
+  }
+
+  const day = new Date().toISOString().slice(0, 10);
+  const identity = await getRateLimitIdentity(request);
+  const deviceKey = `limit:${day}:device:${identity}`;
+  const totalKey = `limit:${day}:total`;
+  const [deviceCount, totalCount] = await Promise.all([
+    readKvCounter(env, deviceKey),
+    readKvCounter(env, totalKey)
+  ]);
+
+  if (dailyDeviceLimit && deviceCount >= dailyDeviceLimit) {
+    return jsonResponse(
+      { error: `Daily usage limit reached for this device. Try again tomorrow or raise DAILY_DEVICE_LIMIT in Cloudflare.` },
+      429
+    );
+  }
+
+  if (dailyTotalLimit && totalCount >= dailyTotalLimit) {
+    return jsonResponse(
+      { error: `Daily usage limit reached for this app. Try again tomorrow or raise DAILY_TOTAL_LIMIT in Cloudflare.` },
+      429
+    );
+  }
+
+  await Promise.all([
+    writeKvCounter(env, deviceKey, deviceCount + 1),
+    writeKvCounter(env, totalKey, totalCount + 1)
+  ]);
+
+  return null;
+}
+
+async function getRateLimitIdentity(request) {
+  const ip = request.headers.get("cf-connecting-ip") || request.headers.get("x-forwarded-for") || "";
+  const deviceId = cleanHeaderValue(request.headers.get("x-et-device-id") || "");
+  const userAgent = request.headers.get("user-agent") || "";
+  return (await hashText(`${deviceId}|${ip}|${userAgent}`)).slice(0, 32);
+}
+
+async function readKvCounter(env, key) {
+  const value = Number(await env.USAGE_KV.get(key));
+  return Number.isFinite(value) && value > 0 ? value : 0;
+}
+
+async function writeKvCounter(env, key, value) {
+  await env.USAGE_KV.put(key, String(value), {
+    expirationTtl: RATE_LIMIT_TTL_SECONDS
+  });
+}
+
+function readPositiveInteger(value, fallback) {
+  const parsed = Number(value || fallback);
+  return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : 0;
+}
+
+async function hashText(value) {
+  const data = new TextEncoder().encode(String(value || ""));
+  const digest = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(digest))
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+async function writeUsageLog(request, env, entry) {
+  if (!env.USAGE_KV) {
+    return;
+  }
+
+  const now = new Date();
+  const usage = normalizeUsage(entry.usage);
+  const costUsd = estimateCostUsd(entry.provider, entry.model, usage);
+  const device = getDeviceInfo(request);
+  const id = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  const log = {
+    id,
+    ts: now.toISOString(),
+    day: now.toISOString().slice(0, 10),
+    feature: entry.feature,
+    provider: entry.provider,
+    model: entry.model,
+    ok: Boolean(entry.ok),
+    inputTokens: usage.inputTokens,
+    outputTokens: usage.outputTokens,
+    totalTokens: usage.totalTokens,
+    costUsd,
+    device
+  };
+
+  await env.USAGE_KV.put(`usage:${log.day}:${now.getTime()}:${id}`, JSON.stringify(log), {
+    expirationTtl: USAGE_RETENTION_SECONDS
+  });
+}
+
+async function readUsageSnapshot(env) {
+  if (!env.USAGE_KV) {
+    return {
+      configured: false,
+      message: "Missing USAGE_KV binding. Add a Cloudflare KV namespace binding named USAGE_KV.",
+      generatedAt: new Date().toISOString(),
+      summary: emptyUsageSummary(),
+      devices: [],
+      logs: []
+    };
+  }
+
+  const logs = [];
+  const today = new Date();
+  const days = [0, 1, 2, 3, 4, 5, 6].map((offset) => {
+    const date = new Date(today);
+    date.setUTCDate(date.getUTCDate() - offset);
+    return date.toISOString().slice(0, 10);
+  });
+
+  for (const day of days) {
+    let cursor;
+    do {
+      const listed = await env.USAGE_KV.list({
+        prefix: `usage:${day}:`,
+        cursor,
+        limit: 100
+      });
+      cursor = listed.cursor;
+
+      for (const key of listed.keys) {
+        const value = await env.USAGE_KV.get(key.name, "json");
+        if (value) logs.push(value);
+      }
+    } while (cursor && logs.length < USAGE_LOG_LIMIT);
+  }
+
+  logs.sort((a, b) => String(b.ts).localeCompare(String(a.ts)));
+  const trimmed = logs.slice(0, USAGE_LOG_LIMIT);
+  const devices = summarizeByDevice(trimmed);
+  await attachNicknames(env, devices);
+  attachLogNicknames(trimmed, devices);
+
+  return {
+    configured: true,
+    generatedAt: new Date().toISOString(),
+    summary: summarizeUsage(trimmed),
+    devices,
+    logs: trimmed
+  };
+}
+
+function emptyUsageSummary() {
+  return {
+    calls: 0,
+    inputTokens: 0,
+    outputTokens: 0,
+    totalTokens: 0,
+    costUsd: 0
+  };
+}
+
+function summarizeUsage(logs) {
+  return logs.reduce((summary, log) => {
+    summary.calls += 1;
+    summary.inputTokens += Number(log.inputTokens || 0);
+    summary.outputTokens += Number(log.outputTokens || 0);
+    summary.totalTokens += Number(log.totalTokens || 0);
+    summary.costUsd += Number(log.costUsd || 0);
+    return summary;
+  }, emptyUsageSummary());
+}
+
+function summarizeByDevice(logs) {
+  const map = new Map();
+
+  for (const log of logs) {
+    const device = log.device || {};
+    const key = createDeviceKey(device);
+    const existing = map.get(key) || {
+      deviceKey: key,
+      deviceId: device.deviceId || "",
+      deviceLabel: device.deviceLabel || "",
+      phoneModel: device.phoneModel || "Unknown",
+      platform: device.platform || "",
+      browser: device.browser || "",
+      screen: device.screen || "",
+      timezone: device.timezone || "",
+      country: device.country || "",
+      calls: 0,
+      inputTokens: 0,
+      outputTokens: 0,
+      totalTokens: 0,
+      costUsd: 0,
+      lastSeen: log.ts
+    };
+
+    existing.calls += 1;
+    existing.inputTokens += Number(log.inputTokens || 0);
+    existing.outputTokens += Number(log.outputTokens || 0);
+    existing.totalTokens += Number(log.totalTokens || 0);
+    existing.costUsd += Number(log.costUsd || 0);
+    if (String(log.ts) > String(existing.lastSeen)) existing.lastSeen = log.ts;
+    map.set(key, existing);
+  }
+
+  return Array.from(map.values()).sort((a, b) => b.costUsd - a.costUsd || b.calls - a.calls);
+}
+
+async function attachNicknames(env, devices) {
+  await Promise.all(devices.map(async (device) => {
+    device.nickname = await env.USAGE_KV.get(`nickname:${device.deviceKey}`) || "";
+  }));
+}
+
+function attachLogNicknames(logs, devices) {
+  const nicknames = new Map(devices.map((device) => [device.deviceKey, device.nickname || ""]));
+
+  for (const log of logs) {
+    const key = createDeviceKey(log.device || {});
+    log.deviceKey = key;
+    log.deviceNickname = nicknames.get(key) || "";
+  }
+}
+
+function groupRecentLogs(logs) {
+  const groups = new Map();
+
+  for (const log of logs.slice(0, 80)) {
+    const key = log.deviceKey || createDeviceKey(log.device || {});
+    const existing = groups.get(key) || {
+      key,
+      label: formatDeviceName(log.device, log.deviceNickname),
+      calls: 0,
+      totalTokens: 0,
+      costUsd: 0,
+      lastSeen: log.ts,
+      logs: []
+    };
+
+    existing.calls += 1;
+    existing.totalTokens += Number(log.totalTokens || 0);
+    existing.costUsd += Number(log.costUsd || 0);
+    if (String(log.ts) > String(existing.lastSeen)) existing.lastSeen = log.ts;
+    existing.logs.push(log);
+    groups.set(key, existing);
+  }
+
+  return Array.from(groups.values()).sort((a, b) => String(b.lastSeen).localeCompare(String(a.lastSeen)));
+}
+
+function createDeviceKey(device = {}) {
+  return cleanNicknameKey(device.deviceId || `${device.phoneModel || "Unknown"}|${device.userAgent || ""}`.slice(0, 80));
+}
+
+function cleanNicknameKey(value) {
+  return String(value || "").replace(/[^\w .:/()[\]-]/g, "").slice(0, 140);
+}
+
+function cleanNickname(value) {
+  return String(value || "").replace(/[<>]/g, "").trim().slice(0, 40);
+}
+
+function normalizeUsage(usage = {}) {
+  const inputTokens = Number(usage.inputTokens || 0);
+  const outputTokens = Number(usage.outputTokens || 0);
+  const totalTokens = Number(usage.totalTokens || inputTokens + outputTokens || 0);
+
+  return { inputTokens, outputTokens, totalTokens };
+}
+
+function extractDeepSeekUsage(payload) {
+  const usage = payload?.usage || {};
+  return {
+    inputTokens: usage.prompt_tokens || usage.input_tokens || 0,
+    outputTokens: usage.completion_tokens || usage.output_tokens || 0,
+    totalTokens: usage.total_tokens || 0
+  };
+}
+
+function extractGeminiUsage(payload) {
+  const usage = payload?.usageMetadata || {};
+  return {
+    inputTokens: usage.promptTokenCount || 0,
+    outputTokens: usage.candidatesTokenCount || 0,
+    totalTokens: usage.totalTokenCount || 0
+  };
+}
+
+function extractOpenAIUsage(payload) {
+  const usage = payload?.usage || {};
+  return {
+    inputTokens: usage.input_tokens || 0,
+    outputTokens: usage.output_tokens || 0,
+    totalTokens: usage.total_tokens || 0
+  };
+}
+
+function estimateCostUsd(provider, model, usage) {
+  const key = provider === "deepseek" ? model : provider;
+  const rates = MODEL_RATES_USD_PER_MILLION[key] || MODEL_RATES_USD_PER_MILLION[provider] || { input: 0, output: 0 };
+  const inputCost = (Number(usage.inputTokens || 0) / 1_000_000) * rates.input;
+  const outputCost = (Number(usage.outputTokens || 0) / 1_000_000) * rates.output;
+  return Number((inputCost + outputCost).toFixed(8));
+}
+
+function getDeviceInfo(request) {
+  const userAgent = request.headers.get("user-agent") || "";
+  const cf = request.cf || {};
+  const deviceLabel = cleanHeaderValue(request.headers.get("x-et-device-label") || "");
+  const deviceId = cleanHeaderValue(request.headers.get("x-et-device-id") || "");
+  const explicitModel = cleanHeaderValue(request.headers.get("x-et-phone-model") || "");
+  const screen = cleanHeaderValue(request.headers.get("x-et-screen") || "");
+  const timezone = cleanHeaderValue(request.headers.get("x-et-timezone") || "");
+
+  return {
+    deviceId,
+    deviceLabel,
+    phoneModel: explicitModel || parsePhoneModel(userAgent),
+    platform: parsePlatform(userAgent),
+    browser: parseBrowser(userAgent),
+    screen,
+    timezone,
+    country: cf.country || request.headers.get("cf-ipcountry") || "",
+    userAgent: userAgent.slice(0, 220)
+  };
+}
+
+function cleanHeaderValue(value) {
+  return String(value || "").replace(/[^\w .:/()[\]-]/g, "").slice(0, 120);
+}
+
+function parsePhoneModel(userAgent) {
+  const appModel = userAgent.match(/ETPhoneModel\/([^;\s]+)/i);
+  if (appModel) return decodeURIComponent(appModel[1]).replace(/\+/g, " ");
+
+  const android = userAgent.match(/Android [^;)]*;\s*([^;)]+)\s+Build\//i);
+  if (android) return android[1].trim();
+
+  if (/iPhone/i.test(userAgent)) return "iPhone";
+  if (/iPad/i.test(userAgent)) return "iPad";
+  if (/Android/i.test(userAgent)) return "Android device";
+  if (/Windows/i.test(userAgent)) return "Windows";
+  if (/Macintosh/i.test(userAgent)) return "Mac";
+  return "Unknown";
+}
+
+function parsePlatform(userAgent) {
+  if (/Android/i.test(userAgent)) return "Android";
+  if (/iPhone|iPad/i.test(userAgent)) return "iOS";
+  if (/Windows/i.test(userAgent)) return "Windows";
+  if (/Macintosh/i.test(userAgent)) return "Mac";
+  if (/Linux/i.test(userAgent)) return "Linux";
+  return "Web";
+}
+
+function parseBrowser(userAgent) {
+  if (/Edg\//i.test(userAgent)) return "Microsoft Edge";
+  if (/OPR\//i.test(userAgent)) return "Opera";
+  if (/Chrome\//i.test(userAgent) && !/Chromium/i.test(userAgent)) return "Chrome";
+  if (/Firefox\//i.test(userAgent)) return "Firefox";
+  if (/Safari\//i.test(userAgent) && !/Chrome\//i.test(userAgent)) return "Safari";
+  if (/wv\)|Version\/.*Chrome/i.test(userAgent)) return "Android WebView";
+  return "Unknown";
+}
+
+function renderUsageHtml(snapshot) {
+  const money = (value) => `$${Number(value || 0).toFixed(5)}`;
+  const number = (value) => Number(value || 0).toLocaleString();
+  const generatedAt = formatDashboardTime(snapshot.generatedAt);
+  const rows = snapshot.devices.map((device) => `
+      <tr>
+        <td>${escapeHtml(device.phoneModel)}</td>
+        <td>
+          <form class="nickname-form" data-device-key="${escapeHtml(device.deviceKey)}">
+            <input name="nickname" value="${escapeHtml(device.nickname || "")}" placeholder="Add nickname">
+            <button type="submit">Save</button>
+            <span class="save-state"></span>
+          </form>
+          <small>${escapeHtml(device.deviceLabel || "-")}</small>
+        </td>
+        <td>${escapeHtml(device.platform || "-")}</td>
+        <td>${escapeHtml(device.browser || "-")}</td>
+        <td>${escapeHtml(device.screen || "-")}</td>
+        <td>${number(device.calls)}</td>
+        <td>${number(device.totalTokens)}</td>
+        <td>${money(device.costUsd)}</td>
+        <td>${escapeHtml(formatDashboardTime(device.lastSeen))}</td>
+      </tr>`).join("");
+  const recentGroups = groupRecentLogs(snapshot.logs);
+  const logGroups = recentGroups.map((group, index) => {
+    const logRows = group.logs.map((log) => `
+          <tr>
+            <td>${escapeHtml(formatDashboardTime(log.ts))}</td>
+            <td>${escapeHtml(log.feature)}</td>
+            <td>${escapeHtml(log.provider)}</td>
+            <td>${escapeHtml(log.model)}</td>
+            <td>${number(log.totalTokens)}</td>
+            <td>${money(log.costUsd)}</td>
+          </tr>`).join("");
+
+    return `
+      <details class="device-log-group" ${index === 0 ? "open" : ""}>
+        <summary>
+          <span class="device-log-name">${escapeHtml(group.label)}</span>
+          <span class="device-log-meta">${number(group.calls)} calls | ${number(group.totalTokens)} tokens | ${money(group.costUsd)} | Last ${escapeHtml(formatDashboardTime(group.lastSeen))}</span>
+        </summary>
+        <table class="recent-table">
+          <thead><tr><th>Time</th><th>Feature</th><th>Provider</th><th>Model</th><th>Tokens</th><th>Cost</th></tr></thead>
+          <tbody>${logRows}</tbody>
+        </table>
+      </details>`;
+  }).join("");
+
+  return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ET Translator Usage</title>
+    <style>
+      body{margin:0;background:#f6f8fb;color:#17202a;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+      main{width:min(1180px,calc(100% - 28px));margin:0 auto;padding:24px 0 44px}
+      h1{margin:0 0 6px;font-size:2rem} h2{margin:24px 0 10px;font-size:1.15rem}
+      .muted{color:#667085}.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:18px 0}
+      .card,table{border:1px solid #d9e0ea;border-radius:8px;background:#fff;box-shadow:0 12px 28px rgba(23,32,42,.07)}
+      .card{padding:14px}.card strong{display:block;font-size:1.45rem;margin-top:4px}
+      table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden}th,td{padding:10px;border-bottom:1px solid #e8edf4;text-align:left;font-size:.9rem;vertical-align:top}
+      th{background:#eef3f8;color:#667085}tr:last-child td{border-bottom:0}.notice{padding:14px;border:1px solid #f59e0b;background:#fffbeb;border-radius:8px}
+      .hint{margin:8px 0 18px;color:#667085;font-size:.92rem}.time{white-space:nowrap}
+      .toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0 18px}.toolbar p{margin:0}.clear-usage{border:1px solid #dc2626;border-radius:8px;background:#fff;color:#b91c1c;padding:9px 12px;font-weight:800;cursor:pointer}.clear-usage:disabled{opacity:.6;cursor:not-allowed}.clear-state{color:#667085;font-size:.9rem}
+      .device-log-group{border:1px solid #d9e0ea;border-radius:8px;background:#fff;box-shadow:0 12px 28px rgba(23,32,42,.07);margin:10px 0;overflow:hidden}.device-log-group summary{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;cursor:pointer;list-style:none}.device-log-group summary::-webkit-details-marker{display:none}.device-log-group summary:before{content:"+";display:inline-grid;place-items:center;flex:0 0 22px;width:22px;height:22px;border-radius:999px;background:#eef3f8;color:#0f766e;font-weight:900}.device-log-group[open] summary:before{content:"-"}.device-log-name{font-weight:900}.device-log-meta{margin-left:auto;color:#667085;font-size:.88rem;text-align:right}.recent-table{border:0;border-top:1px solid #e8edf4;border-radius:0;box-shadow:none}
+      small{display:block;margin-top:6px;color:#667085}.nickname-form{display:flex;gap:6px;align-items:center}.nickname-form input{min-width:150px;border:1px solid #d9e0ea;border-radius:8px;padding:8px}.nickname-form button{border:1px solid #0f766e;border-radius:8px;background:#0f766e;color:#fff;padding:8px 10px;font-weight:800}.save-state{color:#0f766e;font-size:.82rem}
+      @media(max-width:720px){.cards{grid-template-columns:1fr 1fr}.toolbar{align-items:flex-start;flex-direction:column}.device-log-group summary{align-items:flex-start;flex-wrap:wrap}.device-log-meta{flex-basis:100%;margin-left:34px;text-align:left}table{display:block;overflow:auto}h1{font-size:1.55rem}}
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>ET Translator Usage</h1>
+      <div class="toolbar">
+        <p class="muted">Last 7 days, latest ${USAGE_LOG_LIMIT} records. Generated ${escapeHtml(generatedAt)}.</p>
+        <div>
+          <button id="clearUsageButton" class="clear-usage" type="button">Clear logs</button>
+          <span id="clearUsageState" class="clear-state"></span>
+        </div>
+      </div>
+      ${snapshot.configured ? "" : `<p class="notice">${escapeHtml(snapshot.message)}</p>`}
+      <section class="cards">
+        <div class="card"><span class="muted">Calls</span><strong>${number(snapshot.summary.calls)}</strong></div>
+        <div class="card"><span class="muted">Tokens</span><strong>${number(snapshot.summary.totalTokens)}</strong></div>
+        <div class="card"><span class="muted">Output Tokens</span><strong>${number(snapshot.summary.outputTokens)}</strong></div>
+        <div class="card"><span class="muted">Est. Cost</span><strong>${money(snapshot.summary.costUsd)}</strong></div>
+      </section>
+      <h2>By Device</h2>
+      <p class="hint">Browsers hide exact laptop brand/model for privacy, so Windows/Mac can only show OS, browser, screen, and optional app label. Android APK can send phone model more accurately.</p>
+      <table>
+        <thead><tr><th>Phone / Device</th><th>Label</th><th>OS</th><th>Browser</th><th>Screen</th><th>Calls</th><th>Tokens</th><th>Cost</th><th>Last seen</th></tr></thead>
+        <tbody>${rows || `<tr><td colspan="9" class="muted">No usage logged yet.</td></tr>`}</tbody>
+      </table>
+      <h2>Recent Calls</h2>
+      ${logGroups || `<p class="notice muted">No recent calls yet.</p>`}
+    </main>
+    <script>
+      const params = new URLSearchParams(location.search);
+      const pinFromUrl = params.get("pin") || "";
+      const storedPin = sessionStorage.getItem("et-admin-pin") || "";
+      const pin = pinFromUrl || storedPin;
+
+      if (pinFromUrl) {
+        sessionStorage.setItem("et-admin-pin", pinFromUrl);
+        params.delete("pin");
+        const cleanSearch = params.toString();
+        history.replaceState(null, "", location.pathname + (cleanSearch ? "?" + cleanSearch : "") + location.hash);
+      }
+
+      const adminHeaders = pin ? { "x-admin-pin": pin } : {};
+      const clearButton = document.getElementById("clearUsageButton");
+      const clearState = document.getElementById("clearUsageState");
+      clearButton?.addEventListener("click", async () => {
+        const ok = confirm("Clear all backend usage logs? Nicknames will be kept.");
+        if (!ok) return;
+
+        clearButton.disabled = true;
+        clearState.textContent = "Clearing...";
+
+        const response = await fetch("/api/usage/clear", {
+          method: "POST",
+          headers: adminHeaders
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          clearState.textContent = "Cleared " + (result.deleted || 0) + " logs";
+          setTimeout(() => location.reload(), 600);
+        } else {
+          clearState.textContent = "Clear failed";
+          clearButton.disabled = false;
+        }
+      });
+
+      for (const form of document.querySelectorAll(".nickname-form")) {
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const status = form.querySelector(".save-state");
+          status.textContent = "Saving...";
+          const response = await fetch("/api/usage/nickname", {
+            method: "POST",
+            headers: { "content-type": "application/json", ...adminHeaders },
+            body: JSON.stringify({
+              deviceKey: form.dataset.deviceKey,
+              nickname: form.elements.nickname.value
+            })
+          });
+          status.textContent = response.ok ? "Saved" : "Error";
+          if (response.ok) setTimeout(() => location.reload(), 450);
+        });
+      }
+    </script>
+  </body>
+</html>`;
+}
+
+function formatDeviceName(device = {}, nickname = "") {
+  const pieces = [nickname, device.phoneModel, device.browser, device.screen].filter(Boolean);
+  return pieces.length ? pieces.join(" / ") : "Unknown";
+}
+
+function formatDashboardTime(value) {
+  if (!value) return "-";
+
+  try {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return String(value);
+    return new Intl.DateTimeFormat("en-SG", {
+      timeZone: "Asia/Singapore",
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false
+    }).format(date).replace(",", "") + " SGT";
+  } catch {
+    return String(value);
+  }
+}
+
+function htmlResponse(title, message, status = 200) {
+  return new Response(`<!doctype html><meta charset="utf-8"><title>${escapeHtml(title)}</title><body style="font-family:system-ui;padding:24px"><h1>${escapeHtml(title)}</h1><p>${escapeHtml(message)}</p></body>`, {
+    status,
+    headers: secureHeaders({ "content-type": "text/html; charset=utf-8", "cache-control": "no-store" })
+  });
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
 function jsonResponse(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
-    headers: {
+    headers: secureHeaders({
       "content-type": "application/json; charset=utf-8",
       "cache-control": "no-store"
-    }
+    })
   });
 }
 
-function stringOrEmpty(value) {
-  return typeof value === "string" ? value : "";
+function withSecurityHeaders(response) {
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers: secureHeaders(response.headers)
+  });
 }
+
+function secureHeaders(inputHeaders = {}) {
+  const headers = new Headers(inputHeaders);
+  headers.set("x-content-type-options", "nosniff");
+  headers.set("x-frame-options", "DENY");
+  headers.set("referrer-policy", "no-referrer");
+  headers.set("permissions-policy", "camera=(), microphone=(), geolocation=(), payment=()");
+  headers.set(
+    "content-security-policy",
+    "default-src 'self'; connect-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
+  );
+  return headers;
+}
+
+function stringOrEmpty(value) {
+  return typeof value === "string" ? toSimplifiedChinese(value) : "";
+}
+
+function toSimplifiedChinese(value) {
+  let output = "";
+
+  for (const character of value) {
+    output += TRADITIONAL_TO_SIMPLIFIED[character] || character;
+  }
+
+  return output;
+}
+
+
+export { validateTranslateRequest, buildDeepSeekRequest, buildGeminiRequest, buildOpenAIRequest, buildSystemPrompt, parseDeepSeekResponse, parseGeminiResponse, parseOpenAIResponse };

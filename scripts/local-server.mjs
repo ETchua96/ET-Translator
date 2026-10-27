@@ -3,9 +3,9 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { onRequestPost } from "../functions/api/translate.js";
+import worker from "../src/index.js";
 
-const publicDir = fileURLToPath(new URL("../public/", import.meta.url));
+const publicDir = path.resolve(fileURLToPath(new URL("../public/", import.meta.url)));
 const port = Number(process.env.PORT || 4173);
 
 const contentTypes = {
@@ -13,6 +13,7 @@ const contentTypes = {
   ".html": "text/html; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",
   ".json": "application/json; charset=utf-8",
+  ".svg": "image/svg+xml; charset=utf-8",
   ".webmanifest": "application/manifest+json; charset=utf-8"
 };
 
@@ -25,9 +26,8 @@ const server = createServer(async (req, res) => {
       return;
     }
 
-    if (requestUrl.pathname === "/api/ask" && req.method === "POST") {
-      const body = await readRequestBody(req);
-      sendJson(res, mockAsk(body), 200);
+    if (requestUrl.pathname.startsWith("/api/") || requestUrl.pathname.startsWith("/admin/")) {
+      sendJson(res, { error: "Not found." }, 404);
       return;
     }
 
@@ -45,7 +45,11 @@ server.listen(port, () => {
 async function handleTranslate(req, res) {
   const body = await readRequestBody(req);
 
-  if (!process.env.OPENAI_API_KEY) {
+  const input = JSON.parse(body || "{}");
+  const hasApiKey = input.provider === "gemini"
+    ? process.env.GEMINI_API_KEY
+    : process.env.DEEPSEEK_API_KEY || process.env.OPENAI_API_KEY;
+  if (!hasApiKey) {
     sendJson(res, mockTranslation(body), 200);
     return;
   }
@@ -58,13 +62,15 @@ async function handleTranslate(req, res) {
     body
   });
 
-  const response = await onRequestPost({
-    request,
-    env: {
+  const response = await worker.fetch(request, {
+      DEEPSEEK_API_KEY: process.env.DEEPSEEK_API_KEY,
+      DEEPSEEK_MODEL: process.env.DEEPSEEK_MODEL,
+      GEMINI_API_KEY: process.env.GEMINI_API_KEY,
+      GEMINI_MODEL: process.env.GEMINI_MODEL,
       OPENAI_API_KEY: process.env.OPENAI_API_KEY,
       OPENAI_MODEL: process.env.OPENAI_MODEL,
-      OPENAI_FETCH: fetch
-    }
+      DAILY_DEVICE_LIMIT: "0",
+      DAILY_TOTAL_LIMIT: "0"
   });
 
   res.writeHead(response.status, Object.fromEntries(response.headers));
@@ -75,7 +81,7 @@ async function serveStatic(pathname, res) {
   const cleanPath = decodeURIComponent(pathname === "/" ? "/index.html" : pathname);
   const targetPath = path.resolve(publicDir, `.${cleanPath}`);
 
-  if (!targetPath.startsWith(publicDir)) {
+  if (targetPath !== publicDir && !targetPath.startsWith(publicDir + path.sep)) {
     sendText(res, "Forbidden", 403, "text/plain; charset=utf-8");
     return;
   }
@@ -142,7 +148,7 @@ function mockTranslation(body) {
           whenToUse: "Quick work chat."
         }
       ],
-      usageNotes: ["Local mock result. Add OPENAI_API_KEY for real translation."],
+      usageNotes: ["Local mock result. Add a DeepSeek or Gemini API key for real translation."],
       confidence: "medium"
     };
   }
@@ -177,28 +183,8 @@ function mockTranslation(body) {
         whenToUse: "Email or leadership update."
       }
     ],
-    usageNotes: ["Local mock result. Add OPENAI_API_KEY for real translation."],
+    usageNotes: ["Local mock result. Add a DeepSeek or Gemini API key for real translation."],
     confidence: "medium"
-  };
-}
-
-function mockAsk(body) {
-  let input = {};
-
-  try {
-    input = JSON.parse(body || "{}");
-  } catch {
-    input = {};
-  }
-
-  const direction = String(input.direction || "en-zh");
-  const samples = {
-    "en-zh": "我们需要先对齐项目范围和交付物，否则下周上线会有风险。\n\nPinyin: Wǒmen xūyào xiān duìqí xiàngmù fànwéi hé jiāofùwù, fǒuzé xià zhōu shàngxiàn huì yǒu fēngxiǎn.",
-    "zh-en": "We need to align on the project scope and deliverables first, otherwise next week's rollout will carry risk."
-  };
-
-  return {
-    answer: samples[direction] || samples["en-zh"]
   };
 }
 

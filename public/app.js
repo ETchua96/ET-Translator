@@ -13,7 +13,6 @@ const UI_COPY = {
     brand: "English ⇄ Chinese",
     title: "ET Translator",
     translateTab: "Translate",
-    askTab: "Ask AI",
     textLabel: "Text",
     sourcePlaceholder: "Paste a work chat, meeting note, PRD line, or email sentence.",
     directionLabel: "Direction",
@@ -44,18 +43,6 @@ const UI_COPY = {
     recentLabel: "Recent",
     historyAria: "Recent translations",
     emptyHistory: "No recent translations yet.",
-    askTextLabel: "Ask AI",
-    askPlaceholder: "Ask AI anything. Example: translate this, make it natural, or explain the meaning.",
-    askDirectionLabel: "Direction",
-    askDirectionAria: "Ask AI translation direction",
-    askButton: "Send",
-    askingButton: "Sending",
-    askResultLabel: "AI Chat",
-    askWaitingText: "Ready to chat",
-    askResultPlaceholder: "Ask for translation, meaning, reply wording, or business Chinese help.",
-    askFailed: "AI chat failed.",
-    enterAskText: "Type a message for AI.",
-    noAskAnswerReturned: "No AI answer returned.",
     enterText: "Enter something to translate.",
     keepUnderLimit: "Keep it under 5000 characters.",
     translationFailed: "Translation failed.",
@@ -67,14 +54,9 @@ const UI_COPY = {
     noKeyTermsReturned: "No key terms returned.",
     noAlternatePhrasingReturned: "No alternate phrasing returned.",
     alternativeLabel: "Alternative",
-    askDirectionNames: {
-      "en-zh": "English → Chinese",
-      "zh-en": "Chinese → English"
-    },
     status: {
       Ready: "Ready",
       Translating: "Translating",
-      Asking: "Thinking",
       Error: "Error",
       Copied: "Copied"
     }
@@ -84,7 +66,6 @@ const UI_COPY = {
     brand: "英文 ⇄ 中文",
     title: "ET Translator",
     translateTab: "翻译",
-    askTab: "问 AI",
     textLabel: "原文",
     sourcePlaceholder: "粘贴工作聊天、会议记录、PRD 内容或邮件句子。",
     directionLabel: "翻译方向",
@@ -115,22 +96,6 @@ const UI_COPY = {
     recentLabel: "最近记录",
     historyAria: "最近翻译记录",
     emptyHistory: "暂无最近翻译。",
-    askTextLabel: "问 AI",
-    askPlaceholder: "粘贴中文或英文，让 AI 帮你处理。",
-    askActionLabel: "动作",
-    askActionAria: "问 AI 动作",
-    askTranslateAction: "翻译",
-    askExplainAction: "解释",
-    askReplyAction: "回复",
-    askProfessionalAction: "商务中文",
-    askButton: "问 AI",
-    askingButton: "思考中",
-    askResultLabel: "AI 回答",
-    askWaitingText: "等待你的问题",
-    askResultPlaceholder: "AI 会帮你翻译、解释或写回复。",
-    askFailed: "问 AI 失败。",
-    enterAskText: "请输入要让 AI 处理的内容。",
-    noAskAnswerReturned: "没有返回 AI 回答。",
     enterText: "请输入要翻译的内容。",
     keepUnderLimit: "请控制在 5000 字以内。",
     translationFailed: "翻译失败。",
@@ -142,16 +107,9 @@ const UI_COPY = {
     noKeyTermsReturned: "没有返回关键词。",
     noAlternatePhrasingReturned: "没有返回替代表达。",
     alternativeLabel: "替代表达",
-    askActionNames: {
-      translate: "翻译",
-      explain: "解释",
-      reply: "礼貌回复",
-      professional: "商务中文"
-    },
     status: {
       Ready: "就绪",
       Translating: "翻译中",
-      Asking: "思考中",
       Error: "错误",
       Copied: "已复制"
     }
@@ -159,17 +117,11 @@ const UI_COPY = {
 };
 
 const state = {
-  mode: "translate",
   direction: "en-zh",
   tone: "business",
   provider: "deepseek",
-  askDirection: "en-zh",
-  askProvider: "deepseek",
   pageLanguage: loadPageLanguage(),
   currentResult: null,
-  askMessages: [],
-  askResult: "",
-  askPinyin: "",
   history: loadHistory(),
   resultCache: loadResultCache()
 };
@@ -179,7 +131,6 @@ clearLegacyPersistentTextStorage();
 const elements = {
   form: document.querySelector("#translatorForm"),
   translateView: document.querySelector("#translateView"),
-  askView: document.querySelector("#askView"),
   pageLanguageControl: document.querySelector("#pageLanguageControl"),
   sourceText: document.querySelector("#sourceText"),
   charCount: document.querySelector("#charCount"),
@@ -201,29 +152,11 @@ const elements = {
   copyPinyinButton: document.querySelector("#copyPinyinButton"),
   clearHistoryButton: document.querySelector("#clearHistoryButton"),
   historyList: document.querySelector("#historyList"),
-  askForm: document.querySelector("#askForm"),
-  askText: document.querySelector("#askText"),
-  askCharCount: document.querySelector("#askCharCount"),
-  askDirectionControl: document.querySelector("#askDirectionControl"),
-  askProviderControl: document.querySelector("#askProviderControl"),
-  askButton: document.querySelector("#askButton"),
-  askPasteButton: document.querySelector("#askPasteButton"),
-  askClearButton: document.querySelector("#askClearButton"),
-  askErrorText: document.querySelector("#askErrorText"),
-  askModeLabel: document.querySelector("#askModeLabel"),
-  askMessages: document.querySelector("#askMessages"),
-  askEmptyState: document.querySelector("#askEmptyState"),
-  copyAskButton: document.querySelector("#copyAskButton")
 };
 
 elements.form.addEventListener("submit", async (event) => {
   event.preventDefault();
   await translate();
-});
-
-elements.askForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  await askAi();
 });
 
 elements.pageLanguageControl.addEventListener("click", (event) => {
@@ -235,36 +168,18 @@ elements.pageLanguageControl.addEventListener("click", (event) => {
 });
 
 elements.sourceText.addEventListener("input", updateCharCount);
-elements.askText.addEventListener("input", updateAskCharCount);
 elements.directionControl.addEventListener("click", (event) => selectSegment(event, "direction", "direction"));
 elements.toneControl.addEventListener("click", (event) => selectSegment(event, "tone", "tone"));
 elements.providerControl.addEventListener("click", (event) => selectSegment(event, "provider", "provider"));
-elements.askDirectionControl.addEventListener("click", (event) => selectSegment(event, "askDirection", "askDirection"));
-elements.askProviderControl.addEventListener("click", (event) => selectSegment(event, "askProvider", "askProvider"));
 elements.pasteButton.addEventListener("click", () => pasteFromClipboard(elements.sourceText, updateCharCount, elements.errorText));
 elements.clearButton.addEventListener("click", clearInput);
-elements.askPasteButton.addEventListener("click", () => pasteFromClipboard(elements.askText, updateAskCharCount, elements.askErrorText));
-elements.askClearButton.addEventListener("click", clearAskInput);
 elements.copyTranslationButton.addEventListener("click", copyTranslation);
 elements.copyPinyinButton.addEventListener("click", () => copyText(elements.pinyinText.textContent, elements.errorText));
-elements.copyAskButton.addEventListener("click", () => copyText(state.askResult || t("askResultPlaceholder"), elements.askErrorText));
 elements.clearHistoryButton.addEventListener("click", clearHistory);
 
 applyPageLanguage();
 updateCharCount();
-updateAskCharCount();
 renderHistory();
-
-function setMode(mode) {
-  if (!["translate", "ask"].includes(mode)) {
-    return;
-  }
-
-  state.mode = mode;
-  elements.translateView.classList.toggle("active", mode === "translate");
-  elements.askView.classList.toggle("active", mode === "ask");
-
-}
 
 function setPageLanguage(language) {
   if (!UI_COPY[language]) {
@@ -302,7 +217,6 @@ function applyPageLanguage() {
     renderResult(state.currentResult);
   }
 
-  renderAskResult();
   setStatus(elements.connectionStatus.dataset.status || "Ready");
   renderHistory();
 }
@@ -379,63 +293,6 @@ async function translate() {
   }
 }
 
-async function askAi() {
-  const text = elements.askText.value.trim();
-
-  clearError(elements.askErrorText);
-
-  if (!text) {
-    showError(t("enterAskText"), elements.askErrorText);
-    elements.askText.focus();
-    return;
-  }
-
-  if (text.length > MAX_TEXT_LENGTH) {
-    showError(t("keepUnderLimit"), elements.askErrorText);
-    return;
-  }
-
-  const history = state.askMessages.slice(-8).map(({ role, content }) => ({ role, content }));
-  appendAskMessage({ role: "user", content: text });
-  elements.askText.value = "";
-  updateAskCharCount();
-  setAskBusy(true);
-
-  try {
-    const response = await fetch("/api/ask", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        ...deviceHeaders()
-      },
-      body: JSON.stringify({
-        text,
-        messages: history,
-        direction: state.askDirection,
-        provider: state.askProvider
-      })
-    });
-    const data = await readJsonResponse(response, "/api/ask");
-
-    if (!response.ok) {
-      throw new Error(data.error || t("askFailed"));
-    }
-
-    const answer = data.answer || "";
-    state.askResult = answer;
-    state.askPinyin = data.pinyin || "";
-    appendAskMessage({ role: "assistant", content: answer, pinyin: state.askPinyin });
-  } catch (error) {
-    state.askMessages.pop();
-    renderAskMessages();
-    elements.askText.value = text;
-    updateAskCharCount();
-    showError(error instanceof Error ? error.message : t("askFailed"), elements.askErrorText);
-  } finally {
-    setAskBusy(false);
-  }
-}
-
 function getCachedResult(text) {
   return state.resultCache[createResultCacheKey(text)] || null;
 }
@@ -490,52 +347,6 @@ function resetResult() {
   elements.meaningText.textContent = t("meaningPlaceholder");
   elements.termsList.replaceChildren(emptyItem(t("termsPlaceholder")));
   elements.alternativesList.replaceChildren(emptyItem(t("alternativesPlaceholder")));
-}
-
-function renderAskResult() {
-  const directionNames = UI_COPY[state.pageLanguage]?.askDirectionNames || UI_COPY.en.askDirectionNames;
-  elements.askModeLabel.textContent = directionNames[state.askDirection] || t("askWaitingText");
-  renderAskMessages();
-}
-
-function appendAskMessage(message) {
-  state.askMessages.push(message);
-  renderAskMessages();
-}
-
-function renderAskMessages() {
-  elements.askMessages.replaceChildren();
-
-  if (!state.askMessages.length) {
-    elements.askMessages.append(elements.askEmptyState);
-    elements.askEmptyState.textContent = t("askResultPlaceholder");
-    return;
-  }
-
-  for (const message of state.askMessages) {
-    const bubble = document.createElement("article");
-    bubble.className = "ask-message " + (message.role === "user" ? "user" : "assistant");
-
-    const label = document.createElement("span");
-    label.className = "ask-message-label";
-    label.textContent = message.role === "user" ? "You" : "AI";
-
-    const body = document.createElement("p");
-    body.textContent = message.content || "";
-
-    bubble.append(label, body);
-
-    if (message.pinyin) {
-      const pinyin = document.createElement("small");
-      pinyin.className = "ask-message-pinyin";
-      pinyin.textContent = message.pinyin;
-      bubble.append(pinyin);
-    }
-
-    elements.askMessages.append(bubble);
-  }
-
-  elements.askMessages.scrollTop = elements.askMessages.scrollHeight;
 }
 
 function renderTerms(terms) {
@@ -617,9 +428,6 @@ function selectSegment(event, stateKey, dataKey) {
     segment.classList.toggle("active", segment === button);
   }
 
-  if (stateKey === "askDirection") {
-    renderAskResult();
-  }
 }
 
 async function pasteFromClipboard(target, updateCount, errorElement) {
@@ -646,17 +454,6 @@ function clearInput() {
 function clearSourceText() {
   elements.sourceText.value = "";
   updateCharCount();
-}
-
-function clearAskInput() {
-  elements.askText.value = "";
-  state.askMessages = [];
-  state.askResult = "";
-  state.askPinyin = "";
-  clearError(elements.askErrorText);
-  updateAskCharCount();
-  renderAskResult();
-  elements.askText.focus();
 }
 
 async function copyTranslation() {
@@ -755,7 +552,6 @@ function renderHistory() {
 }
 
 function restoreHistoryItem(item) {
-  setMode("translate");
   elements.sourceText.value = item.input || "";
   state.direction = item.direction || "en-zh";
   state.tone = item.tone || "business";
@@ -797,21 +593,10 @@ function updateSelectedSegments() {
     button.classList.toggle("active", button.dataset.provider === state.provider);
   }
 
-  for (const button of elements.askProviderControl.querySelectorAll(".segment")) {
-    button.classList.toggle("active", button.dataset.askProvider === state.askProvider);
-  }
-
-  for (const button of elements.askDirectionControl.querySelectorAll(".segment")) {
-    button.classList.toggle("active", button.dataset.askDirection === state.askDirection);
-  }
 }
 
 function updateCharCount() {
   elements.charCount.textContent = `${elements.sourceText.value.length} / ${MAX_TEXT_LENGTH}`;
-}
-
-function updateAskCharCount() {
-  elements.askCharCount.textContent = `${elements.askText.value.length} / ${MAX_TEXT_LENGTH}`;
 }
 
 function deviceHeaders() {
@@ -862,12 +647,6 @@ function setBusy(isBusy) {
   setStatus(isBusy ? "Translating" : "Ready");
 }
 
-function setAskBusy(isBusy) {
-  elements.askButton.disabled = isBusy;
-  elements.askButton.textContent = isBusy ? t("askingButton") : t("askButton");
-  setStatus(isBusy ? "Asking" : "Ready");
-}
-
 function setStatus(text) {
   elements.connectionStatus.dataset.status = text;
   elements.connectionStatus.textContent = tStatus(text);
@@ -884,6 +663,5 @@ function clearError(errorElement) {
 
 window.TranslatorApp = {
   renderTerms,
-  copyTranslation,
-  askAi
+  copyTranslation
 };

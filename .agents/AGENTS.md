@@ -1,4 +1,16 @@
-# Cloudflare Pages Deployment Guidelines
+# ET Translator Maintenance
+
+- The live deployment is the Cloudflare Worker `ettranslate`, not a Pages project.
+- Backend source: `src/index.js`. Frontend source: `public/`.
+- Run `npm run build` to generate `dist/index.js`. Never edit generated code.
+- `npm run deploy` preserves dashboard variables; Wrangler runs the build before uploading.
+- Run `npm run check` and `npm test` before deploying. Optional browser checks: `node scratch/test.mjs` after installing dependencies in `scratch/`.
+- Android projects live in the separate ET-Translator-Android and ET-Translator-Offline-Archive repositories. Local ignored Android files may be retained for SDKs and builds.
+- Do not reintroduce Ask AI, generated duplicates, or default rate limits. Personal-use limits default to 0 (unlimited).
+
+## Legacy Cloudflare Pages Deployment Guidelines
+
+The notes below only apply if a separate Pages deployment is explicitly requested.
 
 When helping the user deploy to Cloudflare Pages, you MUST adhere to the following platform constraints:
 

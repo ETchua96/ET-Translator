@@ -1,5 +1,8 @@
 name = "ettranslate"
 account_id = "1c606148386882fe4e59d13b1875180e"
-main = "index.js"
+main = "dist/index.js"
 compatibility_date = "2026-06-12"
 workers_dev = true
+
+[build]
+command = "node scripts/build-single-worker.mjs"

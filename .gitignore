@@ -13,3 +13,15 @@ et-translator-*/
 android-apk/build/
 android-offline-ai/build/
 android-offline-ai/bundled-model/*.gguf
+
+# Projects preserved in their own repositories; local SDKs/builds stay on disk.
+android-apk/
+android-offline-ai/
+docs/superpowers/plans/2026-06-17-qwen-offline-ai-android.md
+
+# Legacy sources and generated deployment copies.
+/index.js
+/deploy-worker.js
+/deploy/
+/functions/
+/CLOUDFARE_UPLOAD_README.txt

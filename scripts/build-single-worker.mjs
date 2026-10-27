@@ -1,10 +1,10 @@
-import { readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 
 const indexHtml = await readFile(new URL("../public/index.html", import.meta.url));
 const appJs = await readFile(new URL("../public/app.js", import.meta.url));
 const stylesCss = await readFile(new URL("../public/styles.css", import.meta.url));
 const favicon = await readFile(new URL("../public/favicon.svg", import.meta.url));
-const baseWorker = await readFile(new URL("../deploy/_worker.js", import.meta.url), "utf8");
+const baseWorker = await readFile(new URL("../src/index.js", import.meta.url), "utf8");
 
 const assetConstants = `const B64_INDEX_HTML = "${indexHtml.toString("base64")}";
 const B64_APP_JS = "${appJs.toString("base64")}";
@@ -65,9 +65,5 @@ const worker = baseWorker
   )
   .replace("\nfunction validateTranslateRequest", "\n" + assetHelpers + "\nfunction validateTranslateRequest");
 
-await writeFile(new URL("../deploy-worker.js", import.meta.url), worker);
-await writeFile(new URL("../index.js", import.meta.url), worker);
-await writeFile(new URL("../deploy/index.html", import.meta.url), indexHtml);
-await writeFile(new URL("../deploy/app.js", import.meta.url), appJs);
-await writeFile(new URL("../deploy/styles.css", import.meta.url), stylesCss);
-await writeFile(new URL("../deploy/favicon.svg", import.meta.url), favicon);
+await mkdir(new URL("../dist/", import.meta.url), { recursive: true });
+await writeFile(new URL("../dist/index.js", import.meta.url), worker);

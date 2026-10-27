@@ -1,32 +1,24 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
+import worker from "../dist/index.js";
 
-test("single-file worker exists for Cloudflare dashboard editor deployment", async () => {
-  const worker = await readFile(new URL("../deploy-worker.js", import.meta.url), "utf8");
+test("built Worker serves the current HTML, JavaScript, CSS, and favicon", async () => {
+  for (const [route, filename, contentType] of [
+    ["/", "index.html", "text/html"],
+    ["/app.js", "app.js", "text/javascript"],
+    ["/styles.css", "styles.css", "text/css"],
+    ["/favicon.svg", "favicon.svg", "image/svg+xml"]
+  ]) {
+    const response = await worker.fetch(new Request("https://translator.test" + route), {});
+    assert.equal(response.status, 200);
+    assert.ok(response.headers.get("content-type").startsWith(contentType));
+    assert.equal(await response.text(), await readFile(new URL("../public/" + filename, import.meta.url), "utf8"));
+    assert.equal(response.headers.get("x-content-type-options"), "nosniff");
+  }
+});
 
-  assert.match(worker, /export default/);
-  assert.match(worker, /\/api\/translate/);
-  assert.match(worker, /DEEPSEEK_API_KEY/);
-  assert.match(worker, /api\.deepseek\.com\/chat\/completions/);
-  assert.match(worker, /GEMINI_API_KEY/);
-  assert.match(worker, /generativelanguage\.googleapis\.com/);
-  assert.match(worker, /x-goog-api-key/);
-  assert.match(worker, /buildGeminiRequest/);
-  assert.match(worker, /parseGeminiResponse/);
-  assert.doesNotMatch(worker, /responseFormat/);
-  assert.doesNotMatch(worker, /responseMimeType/);
-  assert.doesNotMatch(worker, /responseSchema/);
-  assert.doesNotMatch(worker, /mimeType/);
-  assert.match(worker, /response_format/);
-  assert.match(worker, /Simplified Chinese only/);
-  assert.match(worker, /Do not use Traditional Chinese/);
-  assert.match(worker, /TRADITIONAL_TO_SIMPLIFIED/);
-  assert.match(worker, /toSimplifiedChinese/);
-  assert.match(worker, /B64_INDEX_HTML/);
-  assert.match(worker, /B64_APP_JS/);
-  assert.match(worker, /B64_STYLES_CSS/);
-  assert.match(worker, /enforceApiRateLimit/);
-  assert.match(worker, /content-security-policy/);
-  assert.doesNotMatch(worker, /env\.ASSETS\.fetch/);
+test("removed Ask AI route returns 404", async () => {
+  const response = await worker.fetch(new Request("https://translator.test/api/ask", { method: "POST" }), {});
+  assert.equal(response.status, 404);
 });

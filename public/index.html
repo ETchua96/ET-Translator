@@ -124,61 +124,6 @@
         </section>
       </section>
 
-      <section class="mode-view ask-view" id="askView">
-        <form class="panel ask-chat-panel" id="askForm" aria-label="Ask AI chat">
-          <div class="ask-chat-head">
-            <div>
-              <span class="control-label" data-i18n="askResultLabel">AI Answer</span>
-              <p class="language-pair" id="askModeLabel" data-i18n="askWaitingText">Waiting for your question</p>
-            </div>
-            <button type="button" class="ghost-button small" id="copyAskButton" data-i18n="copyButton">Copy</button>
-          </div>
-
-          <div class="control-row ask-controls">
-            <div>
-              <span class="control-label" data-i18n="askDirectionLabel">Direction</span>
-              <div class="segmented two-way" id="askDirectionControl" role="group" aria-label="Ask AI translation direction" data-i18n-aria="askDirectionAria">
-                <button type="button" class="segment active" data-ask-direction="en-zh">EN -&gt; CN</button>
-                <button type="button" class="segment" data-ask-direction="zh-en">CN -&gt; EN</button>
-              </div>
-            </div>
-
-            <div>
-              <span class="control-label" data-i18n="providerLabel">AI</span>
-              <div class="segmented two-way" id="askProviderControl" role="group" aria-label="AI provider" data-i18n-aria="providerAria">
-                <button type="button" class="segment active" data-ask-provider="deepseek">DeepSeek</button>
-                <button type="button" class="segment" data-ask-provider="gemini">Gemini</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="ask-messages" id="askMessages" aria-live="polite">
-            <div class="ask-empty-state" id="askEmptyState" data-i18n="askResultPlaceholder">AI translation will appear here.</div>
-          </div>
-
-          <div class="ask-composer">
-            <div class="field-head">
-              <label for="askText" data-i18n="askTextLabel">Ask AI</label>
-              <span id="askCharCount">0 / 5000</span>
-            </div>
-            <textarea
-              id="askText"
-              name="askText"
-              rows="3"
-              maxlength="5000"
-              spellcheck="true"
-              placeholder="Ask AI anything. Example: translate this, make it natural, or explain the meaning."
-              data-i18n-placeholder="askPlaceholder"
-            ></textarea>
-            <div class="ask-action-row">
-              <button type="submit" class="primary-button" id="askButton" data-i18n="askButton">Ask AI</button>
-              <button type="button" class="ghost-button" id="askPasteButton" data-i18n="pasteButton">Paste</button>
-              <button type="button" class="ghost-button" id="askClearButton" data-i18n="clearButton">Clear</button>
-            </div>
-            <p class="error-text" id="askErrorText" role="alert"></p>
-          </div>
-        </form>
-      </section>
     </main>
 
     <script src="/app.js" defer></script>

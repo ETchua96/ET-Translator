@@ -128,35 +128,6 @@ h2 {
   font-weight: 700;
 }
 
-.mode-tabs {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 4px;
-  width: min(420px, 100%);
-  min-height: 48px;
-  margin: 0 0 18px;
-  padding: 4px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: #eef3f8;
-}
-
-.mode-tab {
-  min-width: 0;
-  border: 0;
-  border-radius: 6px;
-  background: transparent;
-  color: var(--muted);
-  font-weight: 820;
-  cursor: pointer;
-}
-
-.mode-tab.active {
-  background: var(--panel);
-  color: var(--teal-dark);
-  box-shadow: 0 1px 3px rgba(23, 32, 42, 0.1);
-}
-
 .mode-view {
   display: none;
 }
@@ -165,112 +136,11 @@ h2 {
   display: block;
 }
 
-.ask-view {
-  display: none !important;
-}
-
 .translator-grid {
   display: grid;
   grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
   gap: 18px;
   align-items: start;
-}
-
-.ask-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
-  gap: 18px;
-  align-items: start;
-}
-
-.ask-chat-panel {
-  display: grid;
-  gap: 14px;
-  padding: 16px;
-}
-
-.ask-chat-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.ask-chat-panel .ask-controls {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin-top: 0;
-}
-
-.ask-messages {
-  display: flex;
-  min-height: 360px;
-  max-height: 52vh;
-  overflow-y: auto;
-  flex-direction: column;
-  gap: 10px;
-  padding: 14px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: #f8fafc;
-}
-
-.ask-empty-state {
-  margin: auto;
-  max-width: 520px;
-  color: var(--muted);
-  text-align: center;
-  line-height: 1.5;
-}
-
-.ask-message {
-  width: fit-content;
-  max-width: min(760px, 86%);
-  padding: 10px 12px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: #ffffff;
-  box-shadow: 0 1px 2px rgba(23, 32, 42, 0.05);
-}
-
-.ask-message.user {
-  align-self: flex-end;
-  border-color: rgba(15, 118, 110, 0.22);
-  background: #e9f7f4;
-}
-
-.ask-message.assistant {
-  align-self: flex-start;
-}
-
-.ask-message-label {
-  display: block;
-  margin-bottom: 4px;
-  color: var(--muted);
-  font-size: 0.74rem;
-  font-weight: 800;
-  text-transform: uppercase;
-}
-
-.ask-message p {
-  margin: 0;
-  white-space: pre-wrap;
-  line-height: 1.5;
-}
-
-.ask-message-pinyin {
-  display: block;
-  margin-top: 8px;
-  color: #2563eb;
-  line-height: 1.45;
-}
-
-.ask-composer {
-  border-top: 1px solid var(--line);
-  padding-top: 12px;
-}
-
-.ask-composer textarea {
-  min-height: 92px;
 }
 
 .panel,
@@ -415,18 +285,6 @@ input:focus {
   width: 100%;
 }
 
-.ask-action-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1.55fr) minmax(0, 0.85fr) minmax(0, 0.85fr);
-  gap: 8px;
-  margin-top: 16px;
-}
-
-.ask-action-row .primary-button,
-.ask-action-row .ghost-button {
-  width: 100%;
-}
-
 .primary-button,
 .ghost-button {
   min-height: 42px;
@@ -502,14 +360,6 @@ input:focus {
 .pinyin-text {
   color: var(--blue);
   font-size: 1.04rem;
-  line-height: 1.6;
-  white-space: pre-wrap;
-}
-
-.ask-result-text {
-  min-height: 320px;
-  margin: 14px 0 0;
-  font-size: 1.2rem;
   line-height: 1.6;
   white-space: pre-wrap;
 }
@@ -640,34 +490,15 @@ input:focus {
     font-size: 2rem;
   }
 
-  .mode-tabs {
-    width: 100%;
-    margin-bottom: 12px;
-  }
-
   .status-pill {
     min-width: 80px;
     padding: 7px 10px;
   }
 
   .translator-grid,
-  .ask-grid,
   .control-row,
   .history-list {
     grid-template-columns: 1fr;
-  }
-
-  .ask-chat-panel .ask-controls {
-    grid-template-columns: 1fr;
-  }
-
-  .ask-messages {
-    min-height: 320px;
-    max-height: 46vh;
-  }
-
-  .ask-message {
-    max-width: 92%;
   }
 
   .input-panel,
@@ -699,10 +530,6 @@ input:focus {
     font-size: 1.16rem;
   }
 
-  .ask-result-text {
-    min-height: 220px;
-    font-size: 1.05rem;
-  }
 }
 
 @media (max-width: 420px) {
@@ -735,25 +562,14 @@ input:focus {
     grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.8fr) minmax(0, 0.8fr);
   }
 
-  .ask-action-row {
-    grid-template-columns: 1fr 1fr;
-  }
-
   .primary-button {
     grid-column: auto;
-  }
-
-  .ask-action-row .primary-button {
-    grid-column: 1 / -1;
   }
 
   textarea {
     min-height: 160px;
   }
 
-  .ask-composer textarea {
-    min-height: 86px;
-  }
 }
 
 [hidden] {
