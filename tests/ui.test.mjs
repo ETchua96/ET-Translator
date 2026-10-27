@@ -6,7 +6,6 @@ test("index page includes the required translator controls and result regions", 
   const html = await readFile(new URL("../public/index.html", import.meta.url), "utf8");
 
   for (const id of [
-    "modeTabs",
     "translateView",
     "askView",
     "pageLanguageControl",
@@ -33,7 +32,7 @@ test("index page includes the required translator controls and result regions", 
   }
 
   assert.match(html, /ET Translator/);
-  assert.match(html, /data-mode="translate"/);
+  assert.doesNotMatch(html, /id="modeTabs"/);
   assert.doesNotMatch(html, /data-mode="ask"/);
   assert.match(html, /data-lang="en"/);
   assert.match(html, /data-lang="zh"/);
@@ -80,7 +79,6 @@ test("client script sends translation requests and keeps translation text sessio
   assert.match(script, /pageLanguage/);
   assert.match(script, /PAGE_LANGUAGE_KEY/);
   assert.match(script, /providerControl/);
-  assert.match(script, /modeTabs/);
   assert.match(script, /askAi/);
   assert.match(script, /askMessages/);
   assert.match(script, /appendAskMessage/);

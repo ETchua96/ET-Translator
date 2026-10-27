@@ -178,7 +178,6 @@ clearLegacyPersistentTextStorage();
 
 const elements = {
   form: document.querySelector("#translatorForm"),
-  modeTabs: document.querySelector("#modeTabs"),
   translateView: document.querySelector("#translateView"),
   askView: document.querySelector("#askView"),
   pageLanguageControl: document.querySelector("#pageLanguageControl"),
@@ -227,14 +226,6 @@ elements.askForm.addEventListener("submit", async (event) => {
   await askAi();
 });
 
-elements.modeTabs.addEventListener("click", (event) => {
-  const button = event.target.closest("button[data-mode]");
-
-  if (button) {
-    setMode(button.dataset.mode);
-  }
-});
-
 elements.pageLanguageControl.addEventListener("click", (event) => {
   const button = event.target.closest("button[data-lang]");
 
@@ -273,11 +264,6 @@ function setMode(mode) {
   elements.translateView.classList.toggle("active", mode === "translate");
   elements.askView.classList.toggle("active", mode === "ask");
 
-  for (const button of elements.modeTabs.querySelectorAll("[data-mode]")) {
-    const isActive = button.dataset.mode === mode;
-    button.classList.toggle("active", isActive);
-    button.setAttribute("aria-pressed", String(isActive));
-  }
 }
 
 function setPageLanguage(language) {
