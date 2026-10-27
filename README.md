@@ -1,60 +1,59 @@
 # ET Translator
 
-English ↔ Simplified Chinese translation for work. Includes Hanyu Pinyin, plain meanings, business terms, and alternative wording. DeepSeek is the default provider; Gemini is available from the provider switch.
+A personal English ↔ Simplified Chinese translator for work chats, product requirements, meeting notes, and emails.
 
-Live app: https://ettranslate.eetiong96.workers.dev/
+[Open ET Translator](https://ettranslate.eetiong96.workers.dev/)
 
-## Project layout
+## What it does
 
-- `public/`: HTML, CSS, browser JavaScript, and favicon.
-- `src/index.js`: the single Cloudflare Worker backend source.
-- `scripts/`: local preview and deployment build.
-- `tests/`: translation, UI, security, and generated Worker tests.
-- `dist/index.js`: generated Worker containing the current public assets. Ignored by Git.
+Translate in either direction with a choice of Business, Plain, or Polished tone. Alongside the translation, you get:
 
-Edit source files only. The build embeds the current public assets automatically. Do not edit or commit generated deployment files.
+- Hanyu Pinyin with tone marks.
+- A plain English explanation of the meaning.
+- Key business terms and their meanings.
+- Alternative ways to phrase the message.
 
-## Develop locally
+The app uses Mainland Chinese business wording. DeepSeek is the default AI provider, with Gemini available as an alternative.
 
-Requires Node.js 22 or later.
+Recent translations stay in your current browser session. API keys stay on the server.
+
+## Run locally
+
+Install Node.js 22 or later, then run:
 
 ```powershell
 npm install
 npm run serve
 ```
 
-Open http://localhost:4173. Without a key for the selected provider, local preview returns sample translations.
+Open [localhost:4173](http://localhost:4173). Without an API key, the preview shows sample results.
 
-For real local translations, set `DEEPSEEK_API_KEY` or `GEMINI_API_KEY` in the terminal environment before starting the server. Never commit API keys.
+To use DeepSeek locally, set your key before starting the server:
 
-## Check and deploy
+```powershell
+$env:DEEPSEEK_API_KEY="your-key"
+npm run serve
+```
+
+For Gemini, set `GEMINI_API_KEY` instead and select Gemini in the app.
+
+## Development
+
+The frontend is in `public/`. The backend is in `src/index.js`.
 
 ```powershell
 npm run check
 npm test
+```
+
+The build generates `dist/index.js`, which contains the backend and web assets. Generated files are not committed.
+
+## Deploy
+
+Hosted on Cloudflare Workers. Add `DEEPSEEK_API_KEY` and/or `GEMINI_API_KEY` as secrets for the providers you use, then run:
+
+```powershell
 npm run deploy
 ```
 
-`npm test` builds the deployment file first. Wrangler also runs the build automatically before deployment and preserves dashboard variables with `--keep-vars`. The target is the existing `ettranslate` Cloudflare Worker configured in `wrangler.toml`.
-
-For Cloudflare Git builds, use `npm install` as the install command and `npm run deploy` as the deploy command.
-
-### Cloudflare settings
-
-- Secret `DEEPSEEK_API_KEY`: required for DeepSeek.
-- Secret `GEMINI_API_KEY`: required for Gemini.
-- Optional `DEEPSEEK_MODEL`: defaults to `deepseek-flash`.
-- Optional `GEMINI_MODEL`: defaults to `gemini-3.5-flash`.
-- Optional `ADMIN_PIN` and `USAGE_KV` binding: enable the usage dashboard at `/admin/usage?pin=YOUR_PIN`.
-- `DAILY_DEVICE_LIMIT=0` and `DAILY_TOTAL_LIMIT=0` mean unlimited and are the code defaults.
-
-Keys remain on the Worker. Translation history and cached results remain in the current browser session. Supabase is not needed.
-
-## Android projects
-
-Android sources are maintained separately so this repository stays focused on JavaScript, HTML, and CSS:
-
-- [ET-Translator-Android](https://github.com/ETchua96/ET-Translator-Android): the online Android WebView wrapper.
-- [ET-Translator-Offline-Archive](https://github.com/ETchua96/ET-Translator-Offline-Archive): the archived experimental native Qwen translator.
-
-Both repositories are private. Existing APK installations load the live site and do not need rebuilding for web UI updates. Old source snapshots remain recoverable from this repository's Git history.
+Deployment builds the app automatically and preserves existing dashboard variables. For a separate installation, update the Worker name and account ID in `wrangler.toml` first.
