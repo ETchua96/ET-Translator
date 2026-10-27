@@ -2,8 +2,6 @@
 
 A personal English ↔ Simplified Chinese translator for work chats, product requirements, meeting notes, and emails.
 
-[Open ET Translator](https://ettranslate.eetiong96.workers.dev/)
-
 ## What it does
 
 Translate in either direction with a choice of Business, Plain, or Polished tone. Alongside the translation, you get:
